@@ -107,6 +107,9 @@ const menuToggle = document.querySelector(".menu-toggle");
 const siteNav = document.querySelector(".site-nav");
 const themeToggleButtons = [...document.querySelectorAll("[data-theme-toggle]")];
 const themePreferenceKey = "hakka-theme";
+const hakkaRuntimeSystemThemeQuery = window.matchMedia?.(
+  "(prefers-color-scheme: dark)",
+);
 let registerRevealTargets = () => {};
 let finishRevealTarget = (target) => target.classList.remove("is-revealing");
 
@@ -120,6 +123,7 @@ const setTheme = (theme, persist = false) => {
     button.querySelector("[data-theme-label]").textContent = isNight ? "日間" : "夜間";
   });
   if (persist) {
+    document.documentElement.dataset.themePreference = "user";
     try {
       window.localStorage.setItem(themePreferenceKey, isNight ? "night" : "day");
     } catch (error) {
@@ -135,6 +139,17 @@ themeToggleButtons.forEach((button) => {
     setTheme(document.documentElement.dataset.theme === "night" ? "day" : "night", true);
   });
 });
+
+const updateThemeFromSystem = (event) => {
+  if (document.documentElement.dataset.themePreference === "system") {
+    setTheme(event.matches ? "night" : "day");
+  }
+};
+if (typeof hakkaRuntimeSystemThemeQuery?.addEventListener === "function") {
+  hakkaRuntimeSystemThemeQuery.addEventListener("change", updateThemeFromSystem);
+} else if (typeof hakkaRuntimeSystemThemeQuery?.addListener === "function") {
+  hakkaRuntimeSystemThemeQuery.addListener(updateThemeFromSystem);
+}
 
 const heroCard = document.querySelector("[data-hero-card]");
 if (heroCard) {
