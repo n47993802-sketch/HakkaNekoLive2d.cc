@@ -10,6 +10,11 @@ window.createHakkaTimeoutSignal = (timeoutMs) => {
   return controller.signal;
 };
 
+document.addEventListener("contextmenu", (event) => {
+  if (event.button === 2) event.preventDefault();
+});
+document.addEventListener("dragstart", (event) => event.preventDefault());
+
 const pageLoader = document.querySelector("[data-page-loader]");
 if (pageLoader) {
   const pageName = pageLoader.dataset.pageLoaderPage;
@@ -91,7 +96,9 @@ if (pageLoader) {
       }
       dismissed = true;
       pageLoader.classList.add("is-hidden");
-      window.setTimeout(() => pageLoader.remove(), 260);
+      window.setTimeout(() => {
+        pageLoader.remove();
+      }, 260);
     };
 
     if (document.readyState === "complete") {
@@ -277,19 +284,44 @@ const parseCsv = (source) => {
 };
 
 if (menuToggle && siteNav) {
+  const mobileMenuQuery = window.matchMedia("(max-width: 700px)");
+  let menuCloseTimer;
+  siteNav.inert = mobileMenuQuery.matches;
+
+  const setMenuOpen = (open) => {
+    window.clearTimeout(menuCloseTimer);
+    menuToggle.setAttribute("aria-expanded", String(open));
+    menuToggle.setAttribute("aria-label", open ? "關閉導覽選單" : "開啟導覽選單");
+    siteNav.classList.toggle("is-open", open);
+    const animateClose =
+      !open &&
+      mobileMenuQuery.matches &&
+      !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    siteNav.classList.toggle("is-closing", animateClose);
+    siteNav.inert = mobileMenuQuery.matches && !open;
+
+    if (animateClose) {
+      menuCloseTimer = window.setTimeout(() => {
+        siteNav.classList.remove("is-closing");
+      }, 180);
+    }
+  };
+
   menuToggle.addEventListener("click", () => {
     const open = menuToggle.getAttribute("aria-expanded") === "true";
-    menuToggle.setAttribute("aria-expanded", String(!open));
-    menuToggle.setAttribute("aria-label", open ? "開啟導覽選單" : "關閉導覽選單");
-    siteNav.classList.toggle("is-open", !open);
+    setMenuOpen(!open);
   });
 
   siteNav.querySelectorAll("a").forEach((link) => {
-    link.addEventListener("click", () => {
-      menuToggle.setAttribute("aria-expanded", "false");
-      menuToggle.setAttribute("aria-label", "開啟導覽選單");
-      siteNav.classList.remove("is-open");
-    });
+    link.addEventListener("click", () => setMenuOpen(false));
+  });
+
+  mobileMenuQuery.addEventListener("change", (event) => {
+    window.clearTimeout(menuCloseTimer);
+    siteNav.classList.remove("is-open", "is-closing");
+    menuToggle.setAttribute("aria-expanded", "false");
+    menuToggle.setAttribute("aria-label", "開啟導覽選單");
+    siteNav.inert = event.matches;
   });
 }
 
@@ -840,39 +872,6 @@ if (scheduleList) {
     );
   });
 }
-
-document.addEventListener("click", (event) => {
-  if (
-    event.defaultPrevented ||
-    event.button !== 0 ||
-    event.metaKey ||
-    event.ctrlKey ||
-    event.shiftKey ||
-    event.altKey ||
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches
-  ) return;
-
-  const clicked = event.target;
-  if (!(clicked instanceof Element)) return;
-  const link = clicked.closest("a[href]");
-  if (!link || link.target || link.hasAttribute("download")) return;
-
-  const destination = new URL(link.href, window.location.href);
-  if (destination.origin !== window.location.origin) return;
-  const normalizePath = (path) => path.replace(/index\.html$/, "");
-  if (
-    normalizePath(destination.pathname) === normalizePath(window.location.pathname) &&
-    destination.hash
-  ) return;
-  if (
-    normalizePath(destination.pathname) === normalizePath(window.location.pathname) &&
-    destination.search === window.location.search
-  ) return;
-
-  event.preventDefault();
-  document.body.classList.add("page-leaving");
-  window.setTimeout(() => window.location.assign(destination.href), 300);
-});
 
 document.querySelectorAll("[data-year]").forEach((node) => {
   node.textContent = String(new Date().getFullYear());
@@ -1625,12 +1624,14 @@ if (calculator) {
 
   const reportDownloadError = (error) => {
     console.error("無法產生需求摘要 PNG。", error);
+    quoteStatus.dataset.state = "error";
     quoteStatus.textContent = "需求摘要無法下載，請重新整理頁面後再試。";
   };
 
   const downloadQuoteCard = () => {
     if (!currentQuote) return;
     const quote = currentQuote;
+    quoteStatus.dataset.state = "loading";
     quoteStatus.textContent = "正在準備需求摘要 PNG…";
     try {
       const svgBlob = new Blob([createQuoteSvg(quote)], {
@@ -1664,6 +1665,7 @@ if (calculator) {
             link.download = `hakkaneko-commission-${quote.requestId || "quote"}.png`;
             link.click();
             URL.revokeObjectURL(downloadUrl);
+            quoteStatus.dataset.state = "success";
             quoteStatus.textContent = `委託摘要 PNG（${quote.requestId || "無編號"}）已下載，可以附在 Google 表單中。`;
           }, "image/png");
         } catch (error) {
