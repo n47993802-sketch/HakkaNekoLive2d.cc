@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="查看阿卡貓 Live2D 委託排單進度，依月份瀏覽進行中與已完成案件。" />
+    <meta name="theme-color" content="#e8eef3" />
+    <link rel="icon" href="../assets/images/hakkaneko-pixel.gif" type="image/gif" />
+    <title>目前排單進度｜阿卡貓 HakkaNeko</title><script src="../theme-init.js?v=20261010-session-loader"></script><link rel="stylesheet" href="../styles.css?v=fast-loader-tabs-2" /><script src="../script.js?v=request-timeout-fallback-1" defer></script>
+  </head>
+  <body>
+    <div class="page-loader" data-page-loader data-page-loader-page="schedule" data-page-loader-wait-for="schedule" data-page-loader-minimum-ready-items="3" role="status" aria-live="polite" aria-label="頁面載入中">
+      <div class="page-loader-content">
+        <span class="page-loader-mark" aria-hidden="true"><img class="page-loader-icon" src="../assets/images/hakkaneko-pixel.gif" alt="" /></span>
+        <span class="page-loader-label" aria-hidden="true">LOADING</span>
+        <span class="page-loader-description" data-page-loader-message>正在讀取最新排單資料……</span>
+      </div>
+    </div>
+    <a class="skip-link" href="#main">跳至主要內容</a>
+    <header class="site-header">
+      <a class="brand" href="../index.html"><img class="brand-icon" src="../assets/images/hakkaneko-pixel.gif" alt="" aria-hidden="true" /><span>HakkaNeko<small>LIVE2D CREATOR</small></span></a>
+      <button class="menu-toggle" aria-label="開啟導覽選單" aria-expanded="false" aria-controls="site-nav"></button>
+      <nav class="site-nav" id="site-nav" aria-label="主要導覽">
+        <a href="../index.html">簡介</a><a href="../collab/">合作夥伴</a><a href="../pricing/">委託價目</a><a href="../process/">流程規範</a><a class="nav-schedule current" href="index.html" aria-current="page">排單查詢</a><a href="../works/">作品展示</a><a href="../recommend/">推薦資訊</a><button class="theme-toggle" type="button" data-theme-toggle aria-label="日夜模式" aria-pressed="false" title="切換至夜間模式"><span class="material-icon" data-theme-icon aria-hidden="true">dark_mode</span><span data-theme-label>夜間</span></button>
+      </nav>
+    </header>
+    <main id="main">
+      <h1 class="visually-hidden">目前排單進度</h1>
+      <section class="page-wrap content-section schedule-page-content">
+        <div class="schedule-intro">
+          <div><p class="section-kicker">COMMISSION SCHEDULE</p><h2 class="page-subtitle">目前排單進度</h2></div>
+          <p class="schedule-updated" id="schedule-updated" aria-live="polite">正在讀取最新排單…</p>
+        </div>
+        <div class="filter-row schedule-filters" role="group" aria-label="依委託進度篩選">
+          <button class="filter-button active" type="button" data-schedule-filter="all" aria-pressed="true">全部案件 <span data-count="all">—</span></button>
+          <button class="filter-button" type="button" data-schedule-filter="active" aria-pressed="false">進行中 <span data-count="active">—</span></button>
+          <button class="filter-button" type="button" data-schedule-filter="completed" aria-pressed="false">已完成 <span data-count="completed">—</span></button>
+        </div>
+        <p class="schedule-filter-note">「進行中」包含尚未開始、等待中與製作中的案件。</p>
+        <div class="schedule-list" id="schedule-list" aria-live="polite" aria-busy="true">
+        </div>
+        <noscript><p class="notice-box">此排單頁需要啟用 JavaScript 才能讀取最新資料；請直接前往 <a href="https://docs.google.com/spreadsheets/d/1D-3fx7SqNWTx_prA4Wd0ricCVnM7Zaox3Br0EWQ7Yfc/edit?usp=sharing" target="_blank" rel="noreferrer">公開排單試算表</a> 查看。</p></noscript>
+        <p class="schedule-source">資料來源：<a href="https://docs.google.com/spreadsheets/d/1D-3fx7SqNWTx_prA4Wd0ricCVnM7Zaox3Br0EWQ7Yfc/edit?usp=sharing" target="_blank" rel="noreferrer">公開排單試算表 <span class="external-link-icon" aria-hidden="true"></span></a></p>
+      </section>
+    </main>
+    <footer class="site-footer inner-footer">
+      <div class="footer-main">
+        <div class="footer-identity">
+          <a class="brand" href="../index.html"><img class="brand-icon" src="../assets/images/hakkaneko-pixel.gif" alt="" aria-hidden="true" /><span>HakkaNeko<small>LIVE2D CREATOR</small></span></a>
+          <p class="footer-role">Live2D 建模師・個人接案建模師</p>
+        </div>
+        <nav class="footer-links" aria-label="社群與聯絡方式">
+          <a class="footer-link" href="mailto:n47993802@gmail.com"><span>Email</span><span>n47993802@gmail.com</span></a>
+          <a class="footer-link" href="https://x.com/HakkaNekoLive2D" target="_blank" rel="noopener noreferrer"><span>X</span><span>@HakkaNekoLive2D</span></a>
+          <a class="footer-link" href="https://www.twitch.tv/hakkanekolive2d" target="_blank" rel="noopener noreferrer"><span>Twitch</span><span>hakkanekolive2d</span></a>
+          <a class="footer-link" href="https://discord.gg/sXeKwm4Bkz" target="_blank" rel="noopener noreferrer"><span>Discord</span><span>阿卡貓聊天窩</span></a>
+        </nav>
+      </div>
+      <div class="footer-support">
+        <a class="button button-primary" href="https://ko-fi.com/hakkanekolive2d" target="_blank" rel="noopener noreferrer">請我喝杯咖啡 <span class="button-arrow button-external-icon" aria-hidden="true"></span></a>
+        <p>成為第一位贊助者！</p>
+      </div>
+      <div class="footer-bottom">
+        <small>© <span data-year></span> 阿卡貓 HakkaNeko · All Rights Reserved</small>
+        <p>本網站由 阿卡貓 HakkaNeko 企劃，介面設計與互動效果均由 AI 輔助生成、迭代優化，並經本人審定後發布。</p>
+      </div>
+    </footer>
+  </body>
+</html>

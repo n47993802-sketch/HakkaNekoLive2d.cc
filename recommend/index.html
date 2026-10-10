@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="阿卡貓推薦的頻道，以及粉絲創作的阿卡貓二創作品。" /><link rel="icon" href="../assets/images/hakkaneko-pixel.gif" type="image/gif" />
+    <title>推薦與粉絲二創｜阿卡貓 HakkaNeko</title><script src="../theme-init.js?v=20261010-session-loader"></script><link rel="stylesheet" href="../styles.css?v=fast-loader-tabs-2" /><script src="channels-config.js?v=20261010-lilisnow" defer></script><script src="fanart-config.js?v=20261010-auto-directory-metadata" defer></script><script src="../script.js?v=request-timeout-fallback-1" defer></script><script src="channels.js?v=20261010-loading-sequence" defer></script><script src="fanart.js?v=20261010-loading-sequence" defer></script>
+  </head>
+  <body>
+    <div class="page-loader" data-page-loader data-page-loader-page="recommend" data-page-loader-wait-for="channels fanart" role="status" aria-live="polite" aria-label="頁面載入中">
+      <div class="page-loader-content">
+        <span class="page-loader-mark" aria-hidden="true"><img class="page-loader-icon" src="../assets/images/hakkaneko-pixel.gif" alt="" /></span>
+        <span class="page-loader-label" aria-hidden="true">LOADING</span>
+        <span class="page-loader-description" data-page-loader-message>正在載入頻道與二創資料……</span>
+      </div>
+    </div>
+    <a class="skip-link" href="#main">跳至主要內容</a>
+    <header class="site-header">
+      <a class="brand" href="../index.html"><img class="brand-icon" src="../assets/images/hakkaneko-pixel.gif" alt="" aria-hidden="true" /><span>HakkaNeko<small>LIVE2D CREATOR</small></span></a>
+      <button class="menu-toggle" aria-label="開啟導覽選單" aria-expanded="false" aria-controls="site-nav"></button>
+      <nav class="site-nav" id="site-nav" aria-label="主要導覽">
+        <a href="../index.html">簡介</a><a href="../collab/">合作夥伴</a><a href="../pricing/">委託價目</a><a href="../process/">流程規範</a><a class="nav-schedule" href="../schedule/">排單查詢</a><a href="../works/">作品展示</a><a class="current" href="index.html" aria-current="page">推薦資訊</a><button class="theme-toggle" type="button" data-theme-toggle aria-label="日夜模式" aria-pressed="false" title="切換至夜間模式"><span class="material-icon" data-theme-icon aria-hidden="true">dark_mode</span><span data-theme-label>夜間</span></button>
+      </nav>
+    </header>
+    <main id="main">
+      <h1 class="visually-hidden">推薦</h1>
+      <div class="page-wrap local-page-layout">
+        <div class="local-page-nav">
+          <p class="local-page-nav-heading">推薦內容</p>
+          <div class="local-page-nav-tabs" role="tablist" aria-label="推薦內容分類" data-replay-visited-panels data-reset-scroll-if-clamped>
+            <button id="recommend-tab-channels" type="button" role="tab" aria-selected="true" aria-controls="channel-recommendations" tabindex="0">頻道推薦</button>
+            <button id="recommend-tab-fan-art" type="button" role="tab" aria-selected="false" aria-controls="fan-art" tabindex="-1">二創展示</button>
+          </div>
+        </div>
+        <div class="local-page-content recommend-page-content">
+          <section class="local-page-section" id="channel-recommendations" role="tabpanel" aria-labelledby="recommend-tab-channels" tabindex="0">
+            <p class="section-kicker">CHANNELS I LIKE</p><h2 class="page-subtitle">推薦頻道</h2>
+            <p class="page-copy">阿卡貓精選推薦的頻道，歡迎有興趣的話去看看！</p>
+            <div class="channel-toolbar">
+              <div class="filter-row channel-filters" data-channel-filters role="group" aria-label="頻道直播狀態篩選"></div>
+              <div class="channel-refresh">
+                <button class="button button-primary" type="button" data-channel-refresh>立即更新狀態</button>
+                <p>上次檢查：<time data-channel-updated>尚未檢查</time></p>
+              </div>
+            </div>
+            <p class="channel-status-cadence" data-channel-status-cadence></p>
+            <p class="channel-status-message" data-channel-status-message role="status" aria-live="polite">正在載入推薦頻道……</p>
+            <div class="channel-grid" data-channel-list></div>
+            <div class="channel-submit-note">
+              <div class="channel-submit-copy">
+                <h3>有想推薦的頻道嗎？</h3>
+                <p>歡迎透過表單分享你喜歡的創作者，方便我確認後更新推薦名單。</p>
+              </div>
+              <a class="button button-primary" href="https://forms.gle/rVPU5LbpxFzeMySu7" target="_blank" rel="noreferrer">推薦一個頻道 <span class="button-arrow button-external-icon" aria-hidden="true"></span></a>
+            </div>
+          </section>
+          <section class="local-page-section" id="fan-art" role="tabpanel" aria-labelledby="recommend-tab-fan-art" tabindex="0" hidden>
+            <p class="section-kicker">MADE BY YOU</p><h2 class="page-subtitle">二創展示</h2>
+            <section class="fanart-character-intro" aria-labelledby="fanart-character-heading">
+              <header class="fanart-character-intro-heading">
+                <h3 id="fanart-character-heading">角色設定</h3>
+                <p>先認識三位角色的基本資料與故事，再來看看大家為他們創作的二創作品。</p>
+              </header>
+              <div class="fanart-character-grid">
+                <article class="fanart-character-card">
+                  <header class="fanart-character-card-heading">
+                    <span class="material-icon" aria-hidden="true">auto_awesome</span>
+                    <h4>阿卡貓</h4>
+                  </header>
+                  <dl class="fanart-character-facts">
+                    <div><dt>身高</dt><dd>174 公分</dd></div>
+                    <div><dt>生日</dt><dd>08 / 19</dd></div>
+                    <div><dt>性別</dt><dd>男性</dd></div>
+                  </dl>
+                  <p>誤入奇幻世界的普通男孩，意外獲得召喚「駭客面板」的能力。透過面板，他能在一定程度上修改現實，也因此接觸到許多原本不屬於他的事物。</p>
+                </article>
+                <article class="fanart-character-card">
+                  <header class="fanart-character-card-heading">
+                    <span class="material-icon" aria-hidden="true">auto_awesome</span>
+                    <h4>阿卡咪</h4>
+                  </header>
+                  <dl class="fanart-character-facts">
+                    <div><dt>身高</dt><dd>未公開</dd></div>
+                    <div><dt>生日</dt><dd>未公開</dd></div>
+                    <div><dt>性別</dt><dd>女性</dd></div>
+                  </dl>
+                  <p>她似乎某天突然出現在這個世界，是一名特殊角色。目前公開資訊不多。</p>
+                </article>
+                <article class="fanart-character-card">
+                  <header class="fanart-character-card-heading">
+                    <span class="material-icon" aria-hidden="true">auto_awesome</span>
+                    <h4>貓球</h4>
+                  </header>
+                  <dl class="fanart-character-facts">
+                    <div><dt>身高</dt><dd>未公開</dd></div>
+                    <div><dt>生日</dt><dd>未公開</dd></div>
+                    <div><dt>性別</dt><dd>？？？</dd></div>
+                  </dl>
+                  <p>一個來歷不明的小夥伴，平常總跟在阿卡貓身邊。牠喜歡陪大家聊天，也會在大家心情低落時，努力想辦法讓對方打起精神。</p>
+                </article>
+              </div>
+            </section>
+            <div class="artist-form-note">
+              <div class="artist-form-copy">
+                <p class="section-kicker">FAN ART SUBMISSION</p>
+                <h3>二創投稿須知</h3>
+                <ul class="fanart-submission-rules">
+                  <li>請勿投稿過度血腥或 NSFW 作品；如需例外，請事先取得同意。</li>
+                  <li>請尊重既有角色設定；服裝與造型創作不在此限。</li>
+                  <li>投稿即表示同意阿卡貓於網站及社群媒體展示作品，署名方式可選擇標示創作者或匿名。</li>
+                </ul>
+                <div class="fanart-tag"><small>投稿 Tag</small><strong>#阿捏卡好</strong></div>
+              </div>
+              <div class="artist-form-action">
+                <p>確認須知後，填寫投稿表單。</p>
+                <a class="button button-primary" href="https://forms.gle/FTnW6fVrQpXQhqrN6" target="_blank" rel="noreferrer">分享你的二創 <span class="button-arrow button-external-icon" aria-hidden="true"></span></a>
+              </div>
+            </div>
+            <p class="fanart-status" data-fanart-status role="status" aria-live="polite">正在讀取二創作品清單……</p>
+            <div class="filter-row fanart-filters" data-fanart-filters role="group" aria-label="二創作品類型篩選"></div>
+            <div class="fanart-grid" data-fanart-gallery></div>
+            <div class="notice-box">部分來源素材沒有附上創作者資訊，請先確認匿名投稿或補上署名，再公開展示。投稿署名資料可在二創設定中逐件維護。</div>
+          </section>
+        </div>
+      </div>
+    </main>
+    <footer class="site-footer inner-footer">
+      <div class="footer-main">
+        <div class="footer-identity">
+          <a class="brand" href="../index.html"><img class="brand-icon" src="../assets/images/hakkaneko-pixel.gif" alt="" aria-hidden="true" /><span>HakkaNeko<small>LIVE2D CREATOR</small></span></a>
+          <p class="footer-role">Live2D 建模師・個人接案建模師</p>
+        </div>
+        <nav class="footer-links" aria-label="社群與聯絡方式">
+          <a class="footer-link" href="mailto:n47993802@gmail.com"><span>Email</span><span>n47993802@gmail.com</span></a>
+          <a class="footer-link" href="https://x.com/HakkaNekoLive2D" target="_blank" rel="noopener noreferrer"><span>X</span><span>@HakkaNekoLive2D</span></a>
+          <a class="footer-link" href="https://www.twitch.tv/hakkanekolive2d" target="_blank" rel="noopener noreferrer"><span>Twitch</span><span>hakkanekolive2d</span></a>
+          <a class="footer-link" href="https://discord.gg/sXeKwm4Bkz" target="_blank" rel="noopener noreferrer"><span>Discord</span><span>阿卡貓聊天窩</span></a>
+        </nav>
+      </div>
+      <div class="footer-support">
+        <a class="button button-primary" href="https://ko-fi.com/hakkanekolive2d" target="_blank" rel="noopener noreferrer">請我喝杯咖啡 <span class="button-arrow button-external-icon" aria-hidden="true"></span></a>
+        <p>成為第一位贊助者！</p>
+      </div>
+      <div class="footer-bottom">
+        <small>© <span data-year></span> 阿卡貓 HakkaNeko · All Rights Reserved</small>
+        <p>本網站由 阿卡貓 HakkaNeko 企劃，介面設計與互動效果均由 AI 輔助生成、迭代優化，並經本人審定後發布。</p>
+      </div>
+    </footer>
+  </body>
+</html>

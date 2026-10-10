@@ -1,0 +1,5 @@
+{
+  "defaultLocale": "zh-Hant",
+  "plannedLocales": ["zh-Hant", "zh-Hans", "ja", "en"],
+  "languageSwitcher": "show-after-translations-are-ready"
+}
