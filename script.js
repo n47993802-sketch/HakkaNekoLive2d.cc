@@ -389,7 +389,7 @@ if (desktopPet) {
       "……",
       "我知道你在看我。",
       "我有記下來喔。",
-      "好啦，這次先原諒你。",
+      "不理你了！",
       "你是不是很閒？",
     ],
   ];
@@ -650,6 +650,7 @@ if (desktopPet) {
         angry: { type: "square", volume: 0.022, duration: 0.17, notes: [[170, 118, 0], [145, 105, 0.08]] },
         escape: { type: "triangle", volume: 0.028, duration: 0.3, notes: [[420, 1040, 0], [680, 520, 0.1]] },
         spin: { type: "sine", volume: 0.022, duration: 0.28, notes: [[880, 520, 0], [660, 390, 0.07], [520, 300, 0.14]] },
+        land: { type: "triangle", volume: 0.045, duration: 0.16, notes: [[145, 58, 0], [90, 46, 0.045]] },
         appear: { type: "sine", volume: 0.028, duration: 0.24, notes: [[420, 780, 0], [650, 1040, 0.1]] },
         disappear: { type: "triangle", volume: 0.024, duration: 0.32, notes: [[680, 260, 0], [520, 190, 0.1]] },
         throw: { type: "triangle", volume: 0.026, duration: 0.22, notes: [[300, 760, 0], [440, 240, 0.1]] },
@@ -998,6 +999,7 @@ if (desktopPet) {
       if ((y < 0 && velocityY < 0) || (y > maxY && velocityY > 0)) {
         y = Math.min(Math.max(y, 0), maxY);
         if (velocityY > 0) {
+          playPetSound("land");
           if (!throwHadFloorContact) {
             throwHadFloorContact = true;
             const impactTime = performance.now();
