@@ -9,7 +9,7 @@
     <meta name="twitter:card" content="summary_large_image" /><meta name="twitter:title" content="推薦與粉絲二創｜阿卡貓 HakkaNeko" /><meta name="twitter:description" content="阿卡貓推薦的頻道，以及粉絲創作的阿卡貓二創作品。" />
     <meta name="twitter:image" content="https://hakkanekolive2d.cc/assets/images/hero-happy2024.png" /><meta name="twitter:image:alt" content="阿卡貓 HakkaNeko 的角色插圖" />
     <link rel="icon" href="../assets/images/hakkaneko-pixel.gif" type="image/gif" />
-    <title>推薦與粉絲二創｜阿卡貓 HakkaNeko</title><script src="../theme-init.js?v=system-theme-follow-1"></script><link rel="stylesheet" href="../styles.css?v=fanart-r18-tabs-1" /><script src="channels-config.js?v=channel-add-ryunasato-1" defer></script><script src="fanart-config.js?v=fanart-r18-subfolder-2" defer></script><script src="../script.js?v=motion-feedback-4" defer></script><script src="channels.js?v=channel-on-entry-1" defer></script><script src="fanart.js?v=fanart-r18-tabs-1" defer></script>
+    <title>推薦與粉絲二創｜阿卡貓 HakkaNeko</title><script src="../theme-init.js?v=system-theme-follow-1"></script><link rel="stylesheet" href="../styles.css?v=recommend-buttons-2" /><script src="channels-config.js?v=channel-add-ryunasato-1" defer></script><script src="fanart-config.js?v=fanart-r18-subfolder-2" defer></script><script src="../script.js?v=motion-feedback-4" defer></script><script src="channels.js?v=channel-filters-removed-1" defer></script><script src="fanart.js?v=fanart-loading-skeleton-1" defer></script>
   </head>
   <body>
     <div class="page-loader" data-page-loader data-page-loader-page="recommend" data-page-loader-wait-for="channels fanart" role="status" aria-live="polite" aria-label="頁面載入中">
@@ -42,7 +42,6 @@
             <p class="section-kicker">CHANNELS I LIKE</p><h2 class="page-subtitle">推薦頻道</h2>
             <p class="page-copy">阿卡貓精選推薦的頻道，歡迎有興趣的話去看看！</p>
             <div class="channel-toolbar">
-              <div class="filter-row channel-filters" data-channel-filters role="group" aria-label="頻道直播狀態篩選"></div>
               <div class="channel-updated">
                 <p>上次檢查：<time data-channel-updated>尚未檢查</time></p>
               </div>
@@ -131,7 +130,10 @@
               </header>
               <div class="fanart-r18-gate" data-fanart-r18-gate>
                 <p>作品預覽會在你同意後才載入。</p>
-                <button class="button button-primary" type="button" data-fanart-r18-consent aria-controls="fanart-r18-content">我已年滿 18 歲，並同意檢視</button>
+                <div class="fanart-r18-gate-actions">
+                  <button class="button button-text" type="button" data-fanart-r18-decline>不同意，返回一般作品</button>
+                  <button class="button button-primary" type="button" data-fanart-r18-consent aria-controls="fanart-r18-content">我已年滿 18 歲，並同意檢視</button>
+                </div>
               </div>
               <div class="fanart-r18-content" id="fanart-r18-content" data-fanart-r18-content hidden>
                 <p class="fanart-r18-status" data-fanart-r18-status role="status" aria-live="polite"></p>

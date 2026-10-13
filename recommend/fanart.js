@@ -8,6 +8,7 @@ const fanartR18Content = document.querySelector("[data-fanart-r18-content]");
 const fanartR18Gallery = document.querySelector("[data-fanart-r18-gallery]");
 const fanartR18Status = document.querySelector("[data-fanart-r18-status]");
 const fanartR18Retry = document.querySelector("[data-fanart-r18-retry]");
+const fanartR18Decline = document.querySelector("[data-fanart-r18-decline]");
 const fanartR18Section = document.querySelector(".fanart-r18");
 
 if (fanartConfig && fanartGallery && fanartFilters) {
@@ -359,7 +360,7 @@ if (fanartConfig && fanartGallery && fanartFilters) {
     card.dataset.fanartType = work.type;
 
     const media = document.createElement("div");
-    media.className = "fanart-media";
+    media.className = "fanart-media is-loading";
     const button = document.createElement("button");
     button.className = "fanart-media-button";
     button.type = "button";
@@ -378,7 +379,10 @@ if (fanartConfig && fanartGallery && fanartFilters) {
       video.setAttribute("aria-label", `${work.title}動畫預覽`);
       video.addEventListener(
         "loadeddata",
-        () => video.classList.add("is-loaded"),
+        () => {
+          video.classList.add("is-loaded");
+          media.classList.remove("is-loading");
+        },
         { once: true },
       );
 
@@ -389,6 +393,7 @@ if (fanartConfig && fanartGallery && fanartFilters) {
       video.addEventListener(
         "error",
         () => {
+          media.classList.remove("is-loading");
           video.style.display = "none";
           fallback.hidden = false;
         },
@@ -404,13 +409,17 @@ if (fanartConfig && fanartGallery && fanartFilters) {
       image.decoding = "async";
       image.addEventListener(
         "load",
-        () => image.classList.add("is-loaded"),
+        () => {
+          image.classList.add("is-loaded");
+          media.classList.remove("is-loading");
+        },
         { once: true },
       );
       image.addEventListener(
         "error",
         () => {
           image.classList.add("is-loaded");
+          media.classList.remove("is-loading");
           console.error(`二創作品圖片載入失敗：${work.file}`);
         },
         { once: true },
@@ -506,16 +515,19 @@ if (fanartConfig && fanartGallery && fanartFilters) {
     }
   };
 
-  fanartFilters.addEventListener("click", (event) => {
-    const button = event.target.closest("[data-fanart-filter]");
-    if (!button || !fanartFilters.contains(button)) return;
-    const filter = button.dataset.fanartFilter;
+  const selectFanartFilter = (filter) => {
     fanartFilters.querySelectorAll("[data-fanart-filter]").forEach((item) => {
-      const selected = item === button;
+      const selected = item.dataset.fanartFilter === filter;
       item.classList.toggle("active", selected);
       item.setAttribute("aria-pressed", String(selected));
     });
     applyFanartFilter(filter);
+  };
+
+  fanartFilters.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-fanart-filter]");
+    if (!button || !fanartFilters.contains(button)) return;
+    selectFanartFilter(button.dataset.fanartFilter);
   });
 
   const renderWorks = () => {
@@ -534,7 +546,8 @@ if (fanartConfig && fanartGallery && fanartFilters) {
     fanartR18Content &&
     fanartR18Gallery &&
     fanartR18Status &&
-    fanartR18Retry
+    fanartR18Retry &&
+    fanartR18Decline
   ) {
     const loadR18Works = async () => {
       fanartR18Retry.hidden = true;
@@ -584,6 +597,15 @@ if (fanartConfig && fanartGallery && fanartFilters) {
       fanartR18Gate.hidden = true;
       fanartR18Content.hidden = false;
       void loadR18Works();
+    });
+    fanartR18Decline.addEventListener("click", () => {
+      selectFanartFilter("all");
+      fanartGallery.scrollIntoView({
+        behavior: window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
+          ? "auto"
+          : "smooth",
+        block: "start",
+      });
     });
     fanartR18Retry.addEventListener("click", () => {
       void loadR18Works();

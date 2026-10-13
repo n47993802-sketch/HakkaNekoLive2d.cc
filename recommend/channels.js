@@ -1,12 +1,10 @@
 const channelsConfig = globalThis.CHANNELS_CONFIG;
 const channelList = document.querySelector("[data-channel-list]");
-const channelFilters = document.querySelector("[data-channel-filters]");
 const channelStatusMessage = document.querySelector("[data-channel-status-message]");
 const channelUpdated = document.querySelector("[data-channel-updated]");
 
-if (channelsConfig && channelList && channelFilters && channelStatusMessage && channelUpdated) {
+if (channelsConfig && channelList && channelStatusMessage && channelUpdated) {
   const channelStatuses = new Map();
-  let activeFilter = "all";
   const channelOrder = new Map(
     channelsConfig.channels.map((channel, index) => [channel.key, index]),
   );
@@ -40,12 +38,6 @@ if (channelsConfig && channelList && channelFilters && channelStatusMessage && c
     });
     return icon;
   };
-  const filterDefinitions = [
-    { id: "all", label: "全部" },
-    { id: "online", label: "直播中" },
-    { id: "offline", label: "離線" },
-    { id: "unknown", label: "狀態未知" },
-  ];
   const stateLabels = {
     online: "直播中",
     offline: "目前離線",
@@ -58,18 +50,6 @@ if (channelsConfig && channelList && channelFilters && channelStatusMessage && c
       Object.fromEntries(channel.platforms.map((platform) => [platform.type, "unknown"])),
     );
   });
-
-  channelFilters.replaceChildren(
-    ...filterDefinitions.map((filter, index) => {
-      const button = document.createElement("button");
-      button.className = `filter-button${index === 0 ? " active" : ""}`;
-      button.type = "button";
-      button.dataset.channelFilter = filter.id;
-      button.dataset.filterLabel = filter.label;
-      button.setAttribute("aria-pressed", String(index === 0));
-      return button;
-    }),
-  );
 
   const getChannelState = (channel) => {
     const states = Object.values(channelStatuses.get(channel.key) || {});
@@ -96,27 +76,7 @@ if (channelsConfig && channelList && channelFilters && channelStatusMessage && c
   };
 
   const renderCounts = () => {
-    const counts = {
-      all: channelsConfig.channels.length,
-      online: 0,
-      offline: 0,
-      unknown: 0,
-    };
-    channelsConfig.channels.forEach((channel) => {
-      counts[getChannelState(channel)] += 1;
-    });
-    channelFilters.querySelectorAll("[data-channel-filter]").forEach((button) => {
-      const count = counts[button.dataset.channelFilter] || 0;
-      button.textContent = `${button.dataset.filterLabel} (${count})`;
-    });
-    const shown = channelsConfig.channels.filter(
-      (channel) => activeFilter === "all" || getChannelState(channel) === activeFilter,
-    ).length;
-    channelList.querySelectorAll(".channel-card").forEach((card) => {
-      const channel = channelsConfig.channels.find((item) => item.key === card.dataset.channelKey);
-      card.hidden = activeFilter !== "all" && getChannelState(channel) !== activeFilter;
-    });
-    channelStatusMessage.textContent = `顯示 ${shown} / ${channelsConfig.channels.length} 個頻道`;
+    channelStatusMessage.textContent = `共 ${channelsConfig.channels.length} 個推薦頻道`;
   };
 
   const renderStatus = (channel, card) => {
@@ -213,18 +173,6 @@ if (channelsConfig && channelList && channelFilters && channelStatusMessage && c
     ...channelsConfig.channels.map((channel) => renderChannel(channel)),
   );
   registerRevealTargets(channelList.querySelectorAll(".channel-card"));
-
-  channelFilters.addEventListener("click", (event) => {
-    const button = event.target.closest("[data-channel-filter]");
-    if (!button || !channelFilters.contains(button)) return;
-    activeFilter = button.dataset.channelFilter;
-    channelFilters.querySelectorAll("[data-channel-filter]").forEach((filter) => {
-      const selected = filter === button;
-      filter.classList.toggle("active", selected);
-      filter.setAttribute("aria-pressed", String(selected));
-    });
-    renderCounts();
-  });
 
   const updateChannelStatuses = (statuses) => {
     channelsConfig.channels.forEach((channel) => {
