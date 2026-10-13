@@ -22,8 +22,9 @@
     <meta name="twitter:image" content="https://hakkanekolive2d.cc/assets/images/hero-happy2024.png" />
     <meta name="twitter:image:alt" content="阿卡貓 HakkaNeko 的角色插圖" />
     <link rel="icon" href="../assets/images/hakkaneko-pixel.gif" type="image/gif" />
-    <link rel="stylesheet" href="../styles.css?v=motion-feedback-29" />
-    <script src="../script.js?v=motion-feedback-4" defer></script>
+    <script src="../theme-init.js?v=system-theme-follow-1"></script>
+    <link rel="stylesheet" href="../styles.css?v=site-preferences-5" />
+    <script src="../script.js?v=site-preferences-5" defer></script>
     <title>聯絡阿卡貓 HakkaNeko</title>
   </head>
   <body>
@@ -33,6 +34,16 @@
         <span>HakkaNeko<small>LIVE2D CREATOR</small></span>
       </a>
       <a class="button button-primary" href="../index.html#site-footer">返回首頁</a>
+      <div class="site-preferences">
+        <button class="preferences-toggle" type="button" data-preferences-toggle aria-label="開啟顯示設定" aria-expanded="false" aria-controls="site-preferences-panel"><span class="material-icon" aria-hidden="true">tune</span></button>
+        <div class="site-preferences-panel" id="site-preferences-panel" data-preferences-panel hidden>
+          <p class="site-preferences-heading">顯示設定</p>
+          <div class="site-preferences-controls" data-preferences-controls>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="日夜模式" aria-pressed="false"><span class="material-icon" data-theme-icon aria-hidden="true">light_mode</span><span data-theme-label>日間模式</span></button>
+            <button class="theme-toggle" type="button" data-pet-visibility-toggle aria-label="首頁貓球顯示設定" aria-pressed="true"><span class="material-icon" data-pet-visibility-icon aria-hidden="true">visibility</span><span data-pet-visibility-label>貓球顯示中</span></button>
+          </div>
+        </div>
+      </div>
     </header>
     <main id="main" class="page-wrap content-section">
       <p class="section-kicker">CONTACT</p>
