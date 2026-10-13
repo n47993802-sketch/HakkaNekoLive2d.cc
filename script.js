@@ -943,7 +943,7 @@ if (
   };
   registerRevealTargets(
     document.querySelectorAll(
-      ".featured-card, .work-item, .recommend-card, .channel-card, .fanart-character-intro-heading, .fanart-character-card, .fanart-card, .artist-card, .schedule-card, .action-card, .artist-form-note, .summary-card, .choice-card",
+      ".featured-card, .work-item, .recommend-card, .channel-card, .fanart-character-intro-heading, .fanart-character-card, .fanart-card, .artist-card, .schedule-card, .action-card, .summary-card, .choice-card",
     ),
   );
 }
@@ -1415,7 +1415,12 @@ if (calculator) {
     const rush = calculator.querySelector("[data-rush]").checked;
     const desiredDate = readText("[data-rush-date]");
     if (rush) {
-      addRow("加急需求", desiredDate ? `希望於 ${desiredDate} 前交付，排程確認後報價` : "排程確認後報價");
+      addRow(
+        "加急需求",
+        desiredDate
+          ? `希望於 ${desiredDate} 前交付（需求日期非確認交期；實際時程與報價待確認）`
+          : "加急需求，實際時程與報價待確認",
+      );
       requiresManualQuote = true;
     }
     const notes = readText("[data-extra-notes]");
@@ -1428,12 +1433,12 @@ if (calculator) {
       if (paymentRate > 0) {
         const fee = Math.round(subtotal * paymentRate);
         paymentFees += fee;
-        addRow("付款平台手續費", `${formatPrice(fee)}（按已知起價計 ${paymentRate * 100}%）`);
+        addRow("付款平台手續費", `${formatPrice(fee)}（按已知起價計 ${(paymentRate * 100).toFixed(1)}%）`);
       }
       if (installmentRate > 0) {
         const fee = Math.round(subtotal * installmentRate);
         paymentFees += fee;
-        addRow("分期手續費", `${formatPrice(fee)}（按已知起價計 ${installmentRate * 100}%）`);
+        addRow("分期手續費", `${formatPrice(fee)}（按已知起價計 ${(installmentRate * 100).toFixed(1)}%）`);
       }
     }
 

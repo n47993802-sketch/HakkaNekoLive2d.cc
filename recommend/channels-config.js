@@ -186,6 +186,22 @@ globalThis.CHANNELS_CONFIG = {
         },
       ],
     },
+    {
+      key: "ryunasato221105",
+      name: "佐渡リュナ",
+      bio: "喜歡遊戲、享受遊戲的幽靈一隻，喜歡以身入局親自測試、遊玩。",
+      avatar: {
+        src: "https://static-cdn.jtvnw.net/jtv_user_pictures/8c0a9386-8df0-4b55-90d2-016e3830ab07-profile_image-300x300.png",
+        alt: "佐渡リュナ",
+      },
+      platforms: [
+        {
+          type: "twitch",
+          url: "https://www.twitch.tv/ryunasato221105",
+          label: "ryunasato221105",
+        },
+      ],
+    },
   ],
   twitch: [
     "bunny0422",
@@ -196,6 +212,7 @@ globalThis.CHANNELS_CONFIG = {
     "darkmeyaya",
     "mo_chan_neko",
     "lilisnow_fps",
+    "ryunasato221105",
   ],
   youtube: [
     "MurichanChannel",

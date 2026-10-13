@@ -2,25 +2,14 @@ const channelsConfig = globalThis.CHANNELS_CONFIG;
 const channelList = document.querySelector("[data-channel-list]");
 const channelFilters = document.querySelector("[data-channel-filters]");
 const channelStatusMessage = document.querySelector("[data-channel-status-message]");
-const channelStatusCadence = document.querySelector("[data-channel-status-cadence]");
 const channelUpdated = document.querySelector("[data-channel-updated]");
-const channelRefresh = document.querySelector("[data-channel-refresh]");
 
-if (channelsConfig && channelList && channelFilters && channelStatusMessage && channelStatusCadence && channelUpdated && channelRefresh) {
+if (channelsConfig && channelList && channelFilters && channelStatusMessage && channelUpdated) {
   const channelStatuses = new Map();
   let activeFilter = "all";
   const channelOrder = new Map(
     channelsConfig.channels.map((channel, index) => [channel.key, index]),
   );
-  const refreshButtonLabel = "立即更新狀態";
-  const requestedRefreshMinutes = Number(channelsConfig.statusRefreshMinutes);
-  const refreshMinutes =
-    Number.isFinite(requestedRefreshMinutes) && requestedRefreshMinutes > 0
-      ? Math.max(60, requestedRefreshMinutes)
-      : 60;
-  channelStatusCadence.textContent =
-    `直播狀態每 ${refreshMinutes} 分鐘自動檢查；按「${refreshButtonLabel}」可立即重查。` +
-    "直播中的頻道會排在最前，其餘依推薦順序排列。「狀態未知」表示暫時無法確認，不等於離線。";
 
   const platformNames = {
     twitch: "Twitch",
@@ -376,40 +365,31 @@ if (channelsConfig && channelList && channelFilters && channelStatusMessage && c
   };
 
   const loadPublicStatuses = async () => {
-    channelRefresh.disabled = true;
-    channelRefresh.setAttribute("aria-busy", "true");
-    channelRefresh.textContent = "正在更新狀態…";
     channelStatusMessage.textContent = "正在更新 Twitch / YouTube 直播狀態……";
-    try {
-      const statuses = {};
-      await Promise.all(
-        channelsConfig.channels.map(async (channel) => {
-          const platformStatuses = await Promise.all(
-            channel.platforms.map(async (platform) => [
-              platform.type,
-              platform.type === "twitch"
-                ? await checkTwitchStatus(channel)
-                : platform.type === "youtube"
-                  ? await checkYoutubeStatus(platform)
-                  : "unknown",
-            ]),
-          );
-          statuses[channel.key] = Object.fromEntries(platformStatuses);
-        }),
-      );
-      updateChannelStatuses(statuses);
-      channelUpdated.textContent = new Date().toLocaleString("zh-TW");
-      const hasUnknownStatus = Object.values(statuses).some((platformStatuses) =>
-        Object.values(platformStatuses).includes("unknown"),
-      );
-      channelStatusMessage.textContent = hasUnknownStatus
-        ? "部分頻道狀態未知；平台或公開代理可能暫時無法使用。"
-        : "Twitch / YouTube 狀態已更新。";
-    } finally {
-      channelRefresh.disabled = false;
-      channelRefresh.removeAttribute("aria-busy");
-      channelRefresh.textContent = refreshButtonLabel;
-    }
+    const statuses = {};
+    await Promise.all(
+      channelsConfig.channels.map(async (channel) => {
+        const platformStatuses = await Promise.all(
+          channel.platforms.map(async (platform) => [
+            platform.type,
+            platform.type === "twitch"
+              ? await checkTwitchStatus(channel)
+              : platform.type === "youtube"
+                ? await checkYoutubeStatus(platform)
+                : "unknown",
+          ]),
+        );
+        statuses[channel.key] = Object.fromEntries(platformStatuses);
+      }),
+    );
+    updateChannelStatuses(statuses);
+    channelUpdated.textContent = new Date().toLocaleString("zh-TW");
+    const hasUnknownStatus = Object.values(statuses).some((platformStatuses) =>
+      Object.values(platformStatuses).includes("unknown"),
+    );
+    channelStatusMessage.textContent = hasUnknownStatus
+      ? "部分頻道狀態未知；平台或公開代理可能暫時無法使用。"
+      : "Twitch / YouTube 狀態已更新。";
   };
 
   const loadChannelStatuses = async () => {
@@ -419,9 +399,6 @@ if (channelsConfig && channelList && channelFilters && channelStatusMessage && c
       return;
     }
 
-    channelRefresh.disabled = true;
-    channelRefresh.setAttribute("aria-busy", "true");
-    channelRefresh.textContent = "正在更新狀態…";
     channelStatusMessage.textContent = "正在更新直播狀態……";
     const controller = new AbortController();
     const timeoutId = window.setTimeout(() => controller.abort(), 10000);
@@ -457,13 +434,9 @@ if (channelsConfig && channelList && channelFilters && channelStatusMessage && c
       channelUpdated.textContent = "未成功更新";
     } finally {
       window.clearTimeout(timeoutId);
-      channelRefresh.disabled = false;
-      channelRefresh.removeAttribute("aria-busy");
-      channelRefresh.textContent = refreshButtonLabel;
     }
   };
 
-  channelRefresh.addEventListener("click", loadChannelStatuses);
   renderCounts();
   void loadChannelStatuses()
     .catch((error) => {
@@ -481,5 +454,4 @@ if (channelsConfig && channelList && channelFilters && channelStatusMessage && c
         }),
       );
     });
-  window.setInterval(loadChannelStatuses, refreshMinutes * 60 * 1000);
 }

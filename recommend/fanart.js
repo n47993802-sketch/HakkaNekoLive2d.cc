@@ -2,6 +2,13 @@ const fanartConfig = globalThis.FANART_CONFIG;
 const fanartGallery = document.querySelector("[data-fanart-gallery]");
 const fanartFilters = document.querySelector("[data-fanart-filters]");
 const fanartStatus = document.querySelector("[data-fanart-status]");
+const fanartR18Gate = document.querySelector("[data-fanart-r18-gate]");
+const fanartR18Consent = document.querySelector("[data-fanart-r18-consent]");
+const fanartR18Content = document.querySelector("[data-fanart-r18-content]");
+const fanartR18Gallery = document.querySelector("[data-fanart-r18-gallery]");
+const fanartR18Status = document.querySelector("[data-fanart-r18-status]");
+const fanartR18Retry = document.querySelector("[data-fanart-r18-retry]");
+const fanartR18Section = document.querySelector(".fanart-r18");
 
 if (fanartConfig && fanartGallery && fanartFilters) {
   const imageExtensions = new Set([
@@ -19,8 +26,13 @@ if (fanartConfig && fanartGallery && fanartFilters) {
     ...(fanartConfig.fallbackAnimatedWorks || []),
   ];
   let works = [];
-  const mediaUrl = (file) =>
-    `${fanartConfig.assetBase}/${encodeURIComponent(file)}`;
+  let r18Works = null;
+  let activeFanartFilter = "all";
+  const r18AssetBase = String(
+    fanartConfig.r18AssetBase || `${fanartConfig.assetBase}/R18`,
+  ).replace(/\/+$/, "");
+  const mediaUrl = (file, assetBase = fanartConfig.assetBase) =>
+    `${assetBase}/${encodeURIComponent(file)}`;
   const getFileExtension = (file) =>
     file.slice(file.lastIndexOf(".")).toLowerCase();
   const isVideo = (work) => videoExtensions.has(getFileExtension(work.file));
@@ -30,7 +42,63 @@ if (fanartConfig && fanartGallery && fanartFilters) {
     if (imageExtensions.has(extension)) return "static";
     return null;
   };
-  const buildWorks = (files) => {
+  const configuredR18Entries = Array.isArray(fanartConfig.fallbackR18Works)
+    ? fanartConfig.fallbackR18Works
+    : [];
+  const isValidR18File = (file) =>
+    typeof file === "string" &&
+    file.trim() === file &&
+    file.length > 0 &&
+    !file.includes("/") &&
+    !file.includes("\\") &&
+    Boolean(getWorkType(file));
+  const invalidR18Entries = configuredR18Entries.filter(
+    (file) => !isValidR18File(file),
+  );
+  if (invalidR18Entries.length) {
+    console.warn(
+      "已忽略 fanart-config.js 中無效的 R18 檔名。",
+      invalidR18Entries,
+    );
+  }
+  const r18FallbackFiles = [
+    ...new Set(configuredR18Entries.filter(isValidR18File)),
+  ];
+  const r18FileSet = new Set(r18FallbackFiles);
+  const getMetadataTitle = (file) => {
+    const title = fanartConfig.metadata?.[file]?.title;
+    return typeof title === "string" && title.trim() ? title.trim() : "";
+  };
+  const compareFileNames = (first, second) =>
+    first.localeCompare(second, "zh-Hant", {
+      numeric: true,
+      sensitivity: "base",
+    });
+  const metadataOrder = new Map(
+    Object.keys(fanartConfig.metadata || {}).map((file, index) => [
+      file,
+      index,
+    ]),
+  );
+  const sortFiles = (files) =>
+    [...files].sort((first, second) => {
+      const firstTitle = getMetadataTitle(first);
+      const secondTitle = getMetadataTitle(second);
+      const titleOrder =
+        Number(!firstTitle) - Number(!secondTitle);
+      if (titleOrder) return titleOrder;
+
+      if (firstTitle && secondTitle) {
+        const firstOrder = metadataOrder.get(first);
+        const secondOrder = metadataOrder.get(second);
+        if (firstOrder !== undefined && secondOrder !== undefined) {
+          return firstOrder - secondOrder;
+        }
+      }
+
+      return compareFileNames(first, second);
+    });
+  const buildWorks = (files, titlePrefix = "") => {
     const counts = { static: 0, animated: 0 };
     return files.flatMap((file) => {
       const type = getWorkType(file);
@@ -38,9 +106,8 @@ if (fanartConfig && fanartGallery && fanartFilters) {
       counts[type] += 1;
       const metadata = fanartConfig.metadata?.[file] || {};
       const title =
-        typeof metadata.title === "string" && metadata.title.trim()
-          ? metadata.title.trim()
-          : `${type === "static" ? "靜態" : "動態"}二創 ${String(counts[type]).padStart(2, "0")}`;
+        getMetadataTitle(file) ||
+        `${titlePrefix}${type === "static" ? "靜態" : "動態"}二創 ${String(counts[type]).padStart(2, "0")}`;
       const artist =
         typeof metadata.artist === "string" && metadata.artist.trim()
           ? metadata.artist.trim()
@@ -48,19 +115,23 @@ if (fanartConfig && fanartGallery && fanartFilters) {
       return [{ file, type, title, artist }];
     });
   };
-  const discoverFiles = async () => {
-    const endpoint = String(fanartConfig.directoryApiUrl || "").trim();
-    if (!endpoint) throw new Error("未設定二創資料夾清單 API。");
-    const response = await fetch(endpoint, {
+  const discoverFiles = async (
+    endpoint = fanartConfig.directoryApiUrl,
+    sectionLabel = "二創",
+    allowEmpty = false,
+  ) => {
+    const apiUrl = String(endpoint || "").trim();
+    if (!apiUrl) throw new Error(`未設定${sectionLabel}資料夾清單 API。`);
+    const response = await fetch(apiUrl, {
       headers: { Accept: "application/vnd.github+json" },
       signal: window.createHakkaTimeoutSignal(8000),
     });
     if (!response.ok) {
-      throw new Error(`二創資料夾清單回應錯誤：HTTP ${response.status}`);
+      throw new Error(`${sectionLabel}資料夾清單回應錯誤：HTTP ${response.status}`);
     }
     const entries = await response.json();
     if (!Array.isArray(entries)) {
-      throw new TypeError("二創資料夾清單格式無效。");
+      throw new TypeError(`${sectionLabel}資料夾清單格式無效。`);
     }
     const files = entries
       .filter(
@@ -73,21 +144,9 @@ if (fanartConfig && fanartGallery && fanartFilters) {
           !entry.name.includes("\\") &&
           getWorkType(entry.name),
       )
-      .map((entry) => entry.name)
-      .sort((first, second) => {
-        const typeOrder =
-          Number(videoExtensions.has(getFileExtension(first))) -
-          Number(videoExtensions.has(getFileExtension(second)));
-        return (
-          typeOrder ||
-          first.localeCompare(second, "zh-Hant", {
-            numeric: true,
-            sensitivity: "base",
-          })
-        );
-      });
-    if (files.length === 0) {
-      throw new Error("二創資料夾內沒有支援的圖片或影片。");
+      .map((entry) => entry.name);
+    if (files.length === 0 && !allowEmpty) {
+      throw new Error(`${sectionLabel}資料夾內沒有支援的圖片或影片。`);
     }
     return files;
   };
@@ -155,10 +214,11 @@ if (fanartConfig && fanartGallery && fanartFilters) {
   let lightboxItems = [];
   let lightboxIndex = 0;
   let activeLightboxMedia = "";
+  let activeLightboxAssetBase = fanartConfig.assetBase;
 
   const displayLightboxItem = () => {
     const work = lightboxItems[lightboxIndex];
-    const source = mediaUrl(work.file);
+    const source = mediaUrl(work.file, activeLightboxAssetBase);
     lightboxVideo.pause();
     lightboxVideo.style.display = "none";
     lightboxImage.style.display = "none";
@@ -199,8 +259,13 @@ if (fanartConfig && fanartGallery && fanartFilters) {
     displayLightboxItem();
   };
 
-  const openLightbox = (work) => {
-    lightboxItems = works.filter((item) => item.type === work.type);
+  const openLightbox = (
+    work,
+    collection = works,
+    assetBase = fanartConfig.assetBase,
+  ) => {
+    lightboxItems = collection.filter((item) => item.type === work.type);
+    activeLightboxAssetBase = assetBase;
     lightboxIndex = Math.max(
       0,
       lightboxItems.findIndex((item) => item.file === work.file),
@@ -251,117 +316,17 @@ if (fanartConfig && fanartGallery && fanartFilters) {
   });
 
   const previewVideos = [];
-  const createFanartCard = (work) => {
-    const card = document.createElement("article");
-    card.className = "fanart-card";
-    card.dataset.fanartType = work.type;
-
-    const media = document.createElement("div");
-    media.className = "fanart-media";
-    const button = document.createElement("button");
-    button.className = "fanart-media-button";
-    button.type = "button";
-    button.setAttribute("aria-label", `${work.title}，開啟燈箱`);
-    button.addEventListener("click", () => openLightbox(work));
-
-    const source = mediaUrl(work.file);
-    if (isVideo(work)) {
-      const video = document.createElement("video");
-      video.src = source;
-      video.loop = true;
-      video.muted = true;
-      video.playsInline = true;
-      video.preload = "none";
-      video.setAttribute("aria-label", `${work.title}動畫預覽`);
-
-      const fallback = document.createElement("span");
-      fallback.className = "work-video-fallback";
-      fallback.textContent = "預覽目前無法播放，點按縮圖可開啟燈箱。";
-      fallback.hidden = true;
-      video.addEventListener(
-        "error",
-        () => {
-          video.style.display = "none";
-          fallback.hidden = false;
-        },
-        { once: true },
-      );
-      button.append(video, fallback);
-      previewVideos.push(video);
-    } else {
-      const image = document.createElement("img");
-      image.src = source;
-      image.alt = work.title;
-      image.loading = "lazy";
-      image.decoding = "async";
-      button.append(image);
-    }
-    media.append(button);
-    card.append(media);
-
-    const title = document.createElement("h3");
-    title.textContent = work.title;
-    card.append(title);
-
-    const credit = document.createElement("p");
-    credit.className = "fanart-credit";
-    credit.textContent = work.artist;
-    card.append(credit);
-    return card;
-  };
-
-  fanartFilters.addEventListener("click", (event) => {
-    const button = event.target.closest("[data-fanart-filter]");
-    if (!button || !fanartFilters.contains(button)) return;
-    const filter = button.dataset.fanartFilter;
-    fanartFilters.querySelectorAll("[data-fanart-filter]").forEach((item) => {
-      const selected = item === button;
-      item.classList.toggle("active", selected);
-      item.setAttribute("aria-pressed", String(selected));
-    });
-    fanartGallery.querySelectorAll(".fanart-card").forEach((card) => {
-      const hidden =
-        filter !== "all" && card.dataset.fanartType !== filter;
-      card.hidden = hidden;
-      if (hidden) card.querySelector("video")?.pause();
-    });
-  });
-
-  const renderWorks = () => {
-    fanartGallery.replaceChildren(...works.map(createFanartCard));
-    registerRevealTargets(fanartGallery.querySelectorAll(".fanart-card"));
-
-    const filters = [
-      { id: "all", label: "全部作品", count: works.length },
-      {
-        id: "static",
-        label: "靜態二創",
-        count: works.filter((work) => work.type === "static").length,
-      },
-      {
-        id: "animated",
-        label: "動態二創",
-        count: works.filter((work) => work.type === "animated").length,
-      },
-    ];
-    fanartFilters.replaceChildren(
-      ...filters.map((filter, index) => {
-        const button = document.createElement("button");
-        button.className = `filter-button${index === 0 ? " active" : ""}`;
-        button.type = "button";
-        button.dataset.fanartFilter = filter.id;
-        button.setAttribute("aria-pressed", String(index === 0));
-        button.textContent = `${filter.label} (${filter.count})`;
-        return button;
-      }),
-    );
-
+  let previewVideoObserver;
+  const observePreviewVideos = (videos) => {
     if (
-      previewVideos.length &&
-      "IntersectionObserver" in window &&
-      !window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
+      !videos.length ||
+      !("IntersectionObserver" in window) ||
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
     ) {
-      const videoObserver = new IntersectionObserver(
+      return;
+    }
+    if (!previewVideoObserver) {
+      previewVideoObserver = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
             if (entry.isIntersecting) {
@@ -381,9 +346,249 @@ if (fanartConfig && fanartGallery && fanartFilters) {
         },
         { threshold: 0.25 },
       );
-      previewVideos.forEach((video) => videoObserver.observe(video));
+    }
+    videos.forEach((video) => previewVideoObserver.observe(video));
+  };
+  const createFanartCard = (
+    work,
+    collection = works,
+    assetBase = fanartConfig.assetBase,
+  ) => {
+    const card = document.createElement("article");
+    card.className = "fanart-card";
+    card.dataset.fanartType = work.type;
+
+    const media = document.createElement("div");
+    media.className = "fanart-media";
+    const button = document.createElement("button");
+    button.className = "fanart-media-button";
+    button.type = "button";
+    button.setAttribute("aria-label", `${work.title}，開啟燈箱`);
+    button.addEventListener("click", () =>
+      openLightbox(work, collection, assetBase),
+    );
+
+    const source = mediaUrl(work.file, assetBase);
+    if (isVideo(work)) {
+      const video = document.createElement("video");
+      video.loop = true;
+      video.muted = true;
+      video.playsInline = true;
+      video.preload = "none";
+      video.setAttribute("aria-label", `${work.title}動畫預覽`);
+      video.addEventListener(
+        "loadeddata",
+        () => video.classList.add("is-loaded"),
+        { once: true },
+      );
+
+      const fallback = document.createElement("span");
+      fallback.className = "work-video-fallback";
+      fallback.textContent = "預覽目前無法播放，點按縮圖可開啟燈箱。";
+      fallback.hidden = true;
+      video.addEventListener(
+        "error",
+        () => {
+          video.style.display = "none";
+          fallback.hidden = false;
+        },
+        { once: true },
+      );
+      video.src = source;
+      button.append(video, fallback);
+      previewVideos.push(video);
+    } else {
+      const image = document.createElement("img");
+      image.alt = work.title;
+      image.loading = "lazy";
+      image.decoding = "async";
+      image.addEventListener(
+        "load",
+        () => image.classList.add("is-loaded"),
+        { once: true },
+      );
+      image.addEventListener(
+        "error",
+        () => {
+          image.classList.add("is-loaded");
+          console.error(`二創作品圖片載入失敗：${work.file}`);
+        },
+        { once: true },
+      );
+      image.src = source;
+      button.append(image);
+    }
+    media.append(button);
+    card.append(media);
+
+    const title = document.createElement("h3");
+    title.textContent = work.title;
+    card.append(title);
+
+    const credit = document.createElement("p");
+    credit.className = "fanart-credit";
+    credit.textContent = work.artist;
+    card.append(credit);
+    return card;
+  };
+
+  const renderFilters = () => {
+    const r18CountByType = (type) =>
+      r18Works?.filter((work) => work.type === type).length || 0;
+    const filters = [
+      {
+        id: "all",
+        label: "全部作品",
+        count:
+          works.length + (r18Works === null ? 0 : r18Works.length),
+      },
+      {
+        id: "static",
+        label: "靜態二創",
+        count:
+          works.filter((work) => work.type === "static").length +
+          r18CountByType("static"),
+      },
+      {
+        id: "animated",
+        label: "動態二創",
+        count:
+          works.filter((work) => work.type === "animated").length +
+          r18CountByType("animated"),
+      },
+      {
+        id: "r18",
+        label: "R18 二創",
+        count: r18Works === null ? null : r18Works.length,
+      },
+    ];
+    fanartFilters.replaceChildren(
+      ...filters.map((filter) => {
+        const selected = filter.id === activeFanartFilter;
+        const button = document.createElement("button");
+        button.className = `filter-button${selected ? " active" : ""}`;
+        button.type = "button";
+        button.dataset.fanartFilter = filter.id;
+        button.setAttribute("aria-pressed", String(selected));
+        button.textContent =
+          filter.count === null
+            ? filter.label
+            : `${filter.label} (${filter.count})`;
+        return button;
+      }),
+    );
+  };
+
+  const applyFanartFilter = (filter) => {
+    activeFanartFilter = filter;
+    fanartGallery.querySelectorAll(".fanart-card").forEach((card) => {
+      const hidden =
+        filter === "r18" ||
+        (filter !== "all" && card.dataset.fanartType !== filter);
+      card.hidden = hidden;
+      if (hidden) card.querySelector("video")?.pause();
+    });
+    fanartR18Gallery?.querySelectorAll(".fanart-card").forEach((card) => {
+      const hidden =
+        filter !== "all" &&
+        filter !== "r18" &&
+        card.dataset.fanartType !== filter;
+      card.hidden = hidden;
+      if (hidden) card.querySelector("video")?.pause();
+    });
+    if (filter === "r18") {
+      fanartR18Section?.scrollIntoView({
+        behavior: window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
+          ? "auto"
+          : "smooth",
+        block: "start",
+      });
     }
   };
+
+  fanartFilters.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-fanart-filter]");
+    if (!button || !fanartFilters.contains(button)) return;
+    const filter = button.dataset.fanartFilter;
+    fanartFilters.querySelectorAll("[data-fanart-filter]").forEach((item) => {
+      const selected = item === button;
+      item.classList.toggle("active", selected);
+      item.setAttribute("aria-pressed", String(selected));
+    });
+    applyFanartFilter(filter);
+  });
+
+  const renderWorks = () => {
+    fanartGallery.replaceChildren(
+      ...works.map((work) => createFanartCard(work)),
+    );
+    registerRevealTargets(fanartGallery.querySelectorAll(".fanart-card"));
+    renderFilters();
+    applyFanartFilter(activeFanartFilter);
+    observePreviewVideos(previewVideos);
+  };
+
+  if (
+    fanartR18Gate &&
+    fanartR18Consent &&
+    fanartR18Content &&
+    fanartR18Gallery &&
+    fanartR18Status &&
+    fanartR18Retry
+  ) {
+    const loadR18Works = async () => {
+      fanartR18Retry.hidden = true;
+      fanartR18Status.textContent = "正在讀取 R18 作品清單……";
+      let r18Files;
+      let usedFallback = false;
+      try {
+        r18Files = await discoverFiles(
+          fanartConfig.r18DirectoryApiUrl,
+          "R18",
+          true,
+        );
+      } catch (error) {
+        console.warn("無法自動讀取 fanart/R18，改用設定檔備援清單。", error);
+        r18Files = r18FallbackFiles;
+        usedFallback = true;
+      }
+
+      const firstR18VideoIndex = previewVideos.length;
+      const loadedR18Works = buildWorks(sortFiles(r18Files), "R18 ");
+      r18Works =
+        usedFallback && loadedR18Works.length === 0
+          ? null
+          : loadedR18Works;
+      fanartR18Gallery.replaceChildren(
+        ...loadedR18Works.map((work) =>
+          createFanartCard(work, loadedR18Works, r18AssetBase),
+        ),
+      );
+      registerRevealTargets(fanartR18Gallery.querySelectorAll(".fanart-card"));
+      observePreviewVideos(previewVideos.slice(firstR18VideoIndex));
+      renderFilters();
+      applyFanartFilter(activeFanartFilter);
+      fanartR18Gate.hidden = true;
+      fanartR18Content.hidden = false;
+      fanartR18Status.textContent = loadedR18Works.length
+        ? usedFallback
+          ? `無法自動讀取 R18 資料夾，暫以設定檔備援清單顯示 ${loadedR18Works.length} 件作品。`
+          : `已從 fanart/R18 讀取 ${loadedR18Works.length} 件作品。`
+        : usedFallback
+          ? "無法讀取 R18 資料夾清單，請稍後重試。"
+          : "fanart/R18 目前沒有可展示的作品。";
+      fanartR18Retry.hidden = !usedFallback || loadedR18Works.length > 0;
+    };
+
+    fanartR18Consent.addEventListener("click", () => {
+      fanartR18Gate.hidden = true;
+      fanartR18Content.hidden = false;
+      void loadR18Works();
+    });
+    fanartR18Retry.addEventListener("click", () => {
+      void loadR18Works();
+    });
+  }
 
   const loadWorks = async () => {
     let files;
@@ -396,7 +601,9 @@ if (fanartConfig && fanartGallery && fanartFilters) {
       usedFallback = true;
     }
 
-    works = buildWorks(files);
+    works = buildWorks(
+      sortFiles(files.filter((file) => !r18FileSet.has(file))),
+    );
     renderWorks();
     if (fanartStatus) {
       fanartStatus.textContent = works.length
