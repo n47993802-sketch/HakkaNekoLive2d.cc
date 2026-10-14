@@ -66,16 +66,24 @@ body { position: relative; isolation: isolate; min-height: 100vh; min-height: 10
 input, textarea, select, [contenteditable]:not([contenteditable="false"]), [contenteditable]:not([contenteditable="false"]) * { -webkit-user-select: text; user-select: text; }
 body::before,
 body::after { content: ""; position: fixed; z-index: -1; pointer-events: none; border: 1px solid var(--geo-line); }
-body::before { top: 12vh; right: -220px; width: 300px; height: 300px; transform: rotate(45deg); background: linear-gradient(135deg,transparent 49.7%,var(--geo-line) 50%,transparent 50.3%),linear-gradient(45deg,transparent 49.7%,var(--geo-line) 50%,transparent 50.3%),linear-gradient(135deg,transparent 50%,var(--geo-fill) 50.2%); }
+body::before { top: 12vh; right: -220px; width: 300px; height: 300px; transform: rotate(45deg); background: linear-gradient(45deg,transparent 49.7%,var(--geo-line) 50%,transparent 50.3%),linear-gradient(135deg,transparent 50%,var(--geo-fill) 50.2%); }
 body::after { bottom: 7vh; left: -170px; width: 230px; height: 230px; border-radius: 50%; background: radial-gradient(circle,transparent 58%,var(--geo-line) 59% 59.4%,transparent 60%),linear-gradient(0deg,transparent 49.7%,var(--geo-line) 50%,transparent 50.3%),linear-gradient(90deg,transparent 49.7%,var(--geo-line) 50%,transparent 50.3%); }
 @keyframes geometry-line-flow { to { --geometry-light-angle: 360deg; } }
 @media (min-width: 701px) {
-  :root[data-theme="night"] body::before,
-  :root[data-theme="night"] body::after,
-  :root[data-theme="night"] .hero-frame::after { animation: geometry-line-flow 30s linear infinite; }
-  :root[data-theme="night"] body::before { border: 2px solid transparent; border-image: conic-gradient(from var(--geometry-light-angle),var(--geo-line) 0deg 304deg,var(--geo-glow) 322deg 330deg,var(--geo-line) 348deg 360deg) 1; filter: drop-shadow(0 0 3px var(--geo-glow)); }
-  :root[data-theme="night"] body::after { border: 0; background: conic-gradient(from var(--geometry-light-angle),var(--geo-line) 0deg 286deg,var(--geo-glow) 302deg 338deg,var(--geo-line) 354deg 360deg); -webkit-mask: radial-gradient(circle closest-side,transparent calc(100% - 4px),#000 calc(100% - 2px),transparent 100%); mask: radial-gradient(circle closest-side,transparent calc(100% - 4px),#000 calc(100% - 2px),transparent 100%); filter: drop-shadow(0 0 7px var(--geo-glow)); animation-delay: -10s; }
-  :root[data-theme="night"] .hero-frame::after { content: ""; position: absolute; inset: -2px; border: 2px solid transparent; border-image: conic-gradient(from var(--geometry-light-angle),var(--line) 0deg 304deg,var(--geo-glow) 322deg 330deg,var(--line) 348deg 360deg) 1; pointer-events: none; filter: drop-shadow(0 0 3px var(--geo-glow)); animation-delay: -20s; }
+  body::before { border: 2px solid transparent; border-image: conic-gradient(from var(--geometry-light-angle),var(--geo-line) 0deg 304deg,var(--geo-glow) 322deg 330deg,var(--geo-line) 348deg 360deg) 1; filter: drop-shadow(0 0 3px var(--geo-glow)); }
+  body::after { border: 0; background: conic-gradient(from var(--geometry-light-angle),var(--geo-line) 0deg 286deg,var(--geo-glow) 302deg 338deg,var(--geo-line) 354deg 360deg); -webkit-mask: radial-gradient(circle closest-side,transparent calc(100% - 4px),#000 calc(100% - 2px),transparent 100%); mask: radial-gradient(circle closest-side,transparent calc(100% - 4px),#000 calc(100% - 2px),transparent 100%); filter: drop-shadow(0 0 7px var(--geo-glow)); }
+  :root[data-theme="night"] .hero-frame::after { content: ""; position: absolute; inset: -1px; border: 1px solid transparent; border-image: conic-gradient(from var(--geometry-light-angle),var(--line) 0deg 304deg,var(--geo-glow) 322deg 330deg,var(--line) 348deg 360deg) 1; pointer-events: none; filter: drop-shadow(0 0 1.5px var(--geo-glow)); }
+}
+@media (min-width: 701px) and (prefers-reduced-motion: no-preference) {
+  body::before,
+  body::after { animation: geometry-line-flow 24s linear infinite; }
+  body::after { animation-delay: -10s; }
+  :root[data-theme="night"] .hero-frame::after { animation: geometry-line-flow 30s linear infinite; animation-delay: -20s; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body::before,
+  body::after,
+  :root[data-theme="night"] .hero-frame::after { animation: none; }
 }
 .page-loader { position: fixed; z-index: 1000; inset: 0; display: grid; place-items: center; padding: 24px; color: var(--ink); background: var(--paper); opacity: 1; visibility: visible; transition: opacity .24s ease,visibility 0s linear .24s; }
 .page-loader[hidden],html[data-page-loader-seen="true"] .page-loader:not([data-page-loader-wait-for]) { display: none; }
@@ -107,7 +115,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .site-nav .nav-about::before, .site-nav .nav-partners::before, .site-nav .nav-pricing::before, .site-nav .nav-process::before, .site-nav .nav-schedule::before, .site-nav .nav-works::before, .site-nav .nav-recommend::before { content: ""; width: 48px; height: 48px; flex: 0 0 48px; background-position: center; background-repeat: no-repeat; background-size: contain; pointer-events: none; }
 .site-nav .nav-about::before { background-image: url("assets/images/icon-about.png?v=1"); }
 .site-nav .nav-partners::before { background-image: url("assets/images/icon-partners.png?v=1"); }
-.site-nav .nav-works::before { background-image: url("assets/images/icon-pricing.png?v=3"); }
+.site-nav .nav-works::before { background-image: url("assets/images/icon-works.png?v=1"); }
 .site-nav .nav-recommend::before { background-image: url("assets/images/icon-recommend.png?v=1"); }
 .site-nav .nav-pricing::before { background-image: url("assets/images/icon-pricing.png?v=2"); }
 .site-nav .nav-process::before { background-image: url("assets/images/icon-process.png?v=2"); }
@@ -855,7 +863,7 @@ h1 em, h2 em { color: var(--accent); font-style: normal; }
   --channel-unknown-bg: #393222;
 }
 
-:root[data-theme="night"] body { color: var(--ink); background: var(--paper); }
+:root[data-theme="night"] body { color: var(--ink); background-color: var(--paper); }
 :root[data-theme="night"] ::selection { background: #3a4e63; color: var(--ink); }
 :root[data-theme="night"] .skip-link,
 :root[data-theme="night"] .site-header { background: var(--surface); }
