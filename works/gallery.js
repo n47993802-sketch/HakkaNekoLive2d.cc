@@ -27,7 +27,9 @@ if (worksConfig && worksGallery && worksFilters) {
   ];
 
   const mediaUrl = (path) =>
-    path.startsWith("http") ? path : `${worksConfig.assetBase}/${path}`;
+    path.startsWith("http") || path.startsWith("../")
+      ? path
+      : `${worksConfig.assetBase}/${path}`;
 
   const lightbox = document.createElement("dialog");
   lightbox.className = "work-lightbox";
@@ -57,6 +59,7 @@ if (worksConfig && worksGallery && worksFilters) {
   const lightboxVideo = document.createElement("video");
   lightboxVideo.className = "work-lightbox-video";
   lightboxVideo.controls = true;
+  lightboxVideo.setAttribute("controlslist", "nodownload");
   lightboxVideo.loop = true;
   lightboxVideo.muted = true;
   lightboxVideo.playsInline = true;

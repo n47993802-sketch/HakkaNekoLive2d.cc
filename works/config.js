@@ -16,6 +16,14 @@ globalThis.WORKS_CONFIG = {
       mediaAlt: "阿卡貓 Live2D V皮展示",
       href: "https://x.com/HakkaNekoLive2D/status/1932328695005618244",
     },
+    {
+      id: "catball-model",
+      title: "貓球 自製 Live2D V皮",
+      description: "建模：阿卡貓 HakkaNeko",
+      media: "../assets/images/catball-model-showcase.png",
+      mediaAlt: "貓球 Live2D V皮展示",
+      href: "https://x.com/HakkaNekoLive2D/status/2110346080382861732",
+    },
   ],
   stickers: [
     {
