@@ -1229,9 +1229,15 @@ h1 em, h2 em { color: var(--accent); font-style: normal; }
 }
 .work-filter-list [role="tab"] { width: 100%; text-align: left; }
 .work-filter-list [role="tab"][aria-selected="true"] { color: var(--ink); background: var(--surface-soft); box-shadow: none; }
-.channel-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 24px 0 9px; }
+.channel-toolbar { display: flex; align-items: center; justify-content: flex-start; flex-wrap: wrap; gap: 12px; margin: 24px 0 9px; }
+.channel-refresh-button { min-height: 36px; padding: 0 12px; justify-content: center; gap: 8px; border-color: var(--line); color: var(--text-soft); background: var(--surface); cursor: pointer; }
+.channel-refresh-button:hover:not(:disabled), .channel-refresh-button:focus-visible { border-color: var(--accent); color: var(--accent); background: var(--surface-raised); }
+.channel-refresh-button:disabled { opacity: .65; cursor: wait; }
+.channel-refresh-button[aria-busy="true"] .material-icon { animation: channel-refresh-spin .8s linear infinite; }
+@keyframes channel-refresh-spin { to { transform: rotate(360deg); } }
 .channel-updated p { margin: 0; color: var(--muted); font-size: var(--type-caption); white-space: nowrap; }
 .channel-status-message { min-height: 44px; margin: 0 0 16px; padding: 12px 15px; border: 1px solid var(--line); color: var(--text-soft); font-size: var(--type-small); }
+.channel-status-message[hidden] { display: none; }
 .channel-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); grid-auto-rows: 1fr; align-items: stretch; gap: 17px; }
 .channel-card { min-width: 0; min-height: 300px; display: flex; flex-direction: column; gap: 14px; padding: 19px; border: 1px solid var(--line); background: var(--surface); transition: border-color .2s ease,box-shadow .25s ease; }
 .channel-card:hover, .channel-card:focus-within { border-color: var(--accent); box-shadow: 0 8px 22px #22283a13; }
@@ -1310,9 +1316,10 @@ h1 em, h2 em { color: var(--accent); font-style: normal; }
 .fanart-r18-status { margin: 0 0 14px; color: var(--muted); font-size: var(--type-caption); }
 @media (prefers-reduced-motion: reduce) {
   .fanart-media.is-loading::after { animation: none; }
+  .channel-refresh-button[aria-busy="true"] .material-icon { animation: none; }
 }
 @media (max-width: 900px) {
-  .channel-toolbar { align-items: flex-start; flex-direction: column; }
+  .channel-toolbar { align-items: flex-start; }
   .fanart-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
   .fanart-character-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
 }

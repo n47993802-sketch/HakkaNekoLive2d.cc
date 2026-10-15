@@ -2,8 +2,15 @@ const channelsConfig = globalThis.CHANNELS_CONFIG;
 const channelList = document.querySelector("[data-channel-list]");
 const channelStatusMessage = document.querySelector("[data-channel-status-message]");
 const channelUpdated = document.querySelector("[data-channel-updated]");
+const channelRefreshButton = document.querySelector("[data-channel-refresh]");
 
-if (channelsConfig && channelList && channelStatusMessage && channelUpdated) {
+if (
+  channelsConfig &&
+  channelList &&
+  channelStatusMessage &&
+  channelUpdated &&
+  channelRefreshButton
+) {
   const channelStatuses = new Map();
   const channelOrder = new Map(
     channelsConfig.channels.map((channel, index) => [channel.key, index]),
@@ -313,7 +320,8 @@ if (channelsConfig && channelList && channelStatusMessage && channelUpdated) {
   };
 
   const loadPublicStatuses = async () => {
-    channelStatusMessage.textContent = "正在更新 Twitch / YouTube 直播狀態……";
+    channelStatusMessage.hidden = true;
+    channelStatusMessage.textContent = "";
     const statuses = {};
     await Promise.all(
       channelsConfig.channels.map(async (channel) => {
@@ -335,9 +343,10 @@ if (channelsConfig && channelList && channelStatusMessage && channelUpdated) {
     const hasUnknownStatus = Object.values(statuses).some((platformStatuses) =>
       Object.values(platformStatuses).includes("unknown"),
     );
+    channelStatusMessage.hidden = !hasUnknownStatus;
     channelStatusMessage.textContent = hasUnknownStatus
       ? "部分頻道狀態未知；平台或公開代理可能暫時無法使用。"
-      : "Twitch / YouTube 狀態已更新。";
+      : "";
   };
 
   const loadChannelStatuses = async () => {
@@ -347,7 +356,8 @@ if (channelsConfig && channelList && channelStatusMessage && channelUpdated) {
       return;
     }
 
-    channelStatusMessage.textContent = "正在更新直播狀態……";
+    channelStatusMessage.hidden = true;
+    channelStatusMessage.textContent = "";
     const controller = new AbortController();
     const timeoutId = window.setTimeout(() => controller.abort(), 10000);
     try {
@@ -368,10 +378,13 @@ if (channelsConfig && channelList && channelStatusMessage && channelUpdated) {
       }
       updateChannelStatuses(result.statuses);
       channelUpdated.textContent = new Date(result.checkedAt).toLocaleString("zh-TW");
-      channelStatusMessage.textContent = Array.isArray(result.errors) && result.errors.length
+      const hasErrors = Array.isArray(result.errors) && result.errors.length > 0;
+      channelStatusMessage.hidden = !hasErrors;
+      channelStatusMessage.textContent = hasErrors
         ? "部分平台狀態暫時無法取得，未知狀態不會列為離線。"
-        : "直播狀態已更新。";
+        : "";
     } catch (error) {
+      channelStatusMessage.hidden = false;
       if (error.name === "AbortError") {
         console.warn("推薦頻道狀態查詢逾時。");
         channelStatusMessage.textContent = "狀態查詢逾時；請稍後再試。";
@@ -385,21 +398,35 @@ if (channelsConfig && channelList && channelStatusMessage && channelUpdated) {
     }
   };
 
-  renderCounts();
-  void loadChannelStatuses()
-    .catch((error) => {
+  const refreshChannelStatuses = async () => {
+    if (channelRefreshButton.disabled) return;
+    channelRefreshButton.disabled = true;
+    channelRefreshButton.setAttribute("aria-busy", "true");
+    try {
+      await loadChannelStatuses();
+    } catch (error) {
       console.error("推薦頻道狀態更新時發生未預期錯誤。", error);
+      channelStatusMessage.hidden = false;
       channelStatusMessage.textContent = "直播狀態暫時無法更新；頻道清單仍可瀏覽。";
-    })
-    .finally(() => {
-      window.dispatchEvent(
-        new CustomEvent("page-content-ready", {
-          detail: {
-            page: "recommend",
-            part: "channels",
-            items: channelsConfig.channels.length,
-          },
-        }),
-      );
-    });
+    } finally {
+      channelRefreshButton.disabled = false;
+      channelRefreshButton.removeAttribute("aria-busy");
+    }
+  };
+
+  channelRefreshButton.addEventListener("click", () => {
+    void refreshChannelStatuses();
+  });
+
+  renderCounts();
+  window.dispatchEvent(
+    new CustomEvent("page-content-ready", {
+      detail: {
+        page: "recommend",
+        part: "channels",
+        items: channelsConfig.channels.length,
+      },
+    }),
+  );
+  void refreshChannelStatuses();
 }

@@ -30,6 +30,23 @@ if (worksConfig && worksGallery && worksFilters) {
     path.startsWith("http") || path.startsWith("../")
       ? path
       : `${worksConfig.assetBase}/${path}`;
+  const rawGitHubUrl = (source) => {
+    const match = source.match(
+      /^https:\/\/cdn\.jsdelivr\.net\/gh\/([^/]+\/[^/@]+)@([^/]+)\/(.+)$/,
+    );
+    return match
+      ? `https://raw.githubusercontent.com/${match[1]}/${match[2]}/${match[3]}`
+      : null;
+  };
+  const useRawGitHubFallback = (media) => {
+    if (media.dataset.rawGitHubFallback === "true") return false;
+    const fallbackUrl = rawGitHubUrl(media.currentSrc || media.src);
+    if (!fallbackUrl) return false;
+    media.dataset.rawGitHubFallback = "true";
+    media.src = fallbackUrl;
+    if (typeof media.load === "function") media.load();
+    return true;
+  };
 
   const lightbox = document.createElement("dialog");
   lightbox.className = "work-lightbox";
@@ -96,6 +113,7 @@ if (worksConfig && worksGallery && worksFilters) {
   const displayLightboxItem = () => {
     const item = lightboxItems[lightboxIndex];
     lightboxVideo.pause();
+    delete lightboxVideo.dataset.rawGitHubFallback;
     lightboxVideo.style.display = "";
     lightboxFallback.hidden = true;
     lightboxTitle.textContent = item.title;
@@ -162,6 +180,18 @@ if (worksConfig && worksGallery && worksFilters) {
   });
   lightboxVideo.addEventListener("error", () => {
     if (!lightbox.open) return;
+    if (useRawGitHubFallback(lightboxVideo)) {
+      lightboxVideo.play().catch((error) => {
+        if (
+          error.name !== "NotAllowedError" &&
+          error.name !== "AbortError" &&
+          error.name !== "NotSupportedError"
+        ) {
+          console.warn("燈箱動畫備援播放失敗。", error);
+        }
+      });
+      return;
+    }
     lightboxVideo.style.display = "none";
     lightboxFallback.hidden = false;
   });
@@ -196,10 +226,21 @@ if (worksConfig && worksGallery && worksFilters) {
       video.addEventListener(
         "error",
         () => {
+          if (useRawGitHubFallback(video)) {
+            video.play().catch((error) => {
+              if (
+                error.name !== "NotAllowedError" &&
+                error.name !== "AbortError" &&
+                error.name !== "NotSupportedError"
+              ) {
+                console.warn("作品動畫備援播放失敗。", error);
+              }
+            });
+            return;
+          }
           video.style.display = "none";
           fallback.hidden = false;
         },
-        { once: true },
       );
       button.append(video, fallback);
       thumb.append(button);
@@ -222,6 +263,10 @@ if (worksConfig && worksGallery && worksFilters) {
       image.alt = item.mediaAlt;
       image.loading = "lazy";
       image.decoding = "async";
+      image.addEventListener("error", () => {
+        if (useRawGitHubFallback(image)) return;
+        console.error(`作品圖片載入失敗：${item.media}`);
+      });
       link.append(image);
       thumb.append(link);
     }
@@ -363,7 +408,6 @@ if (worksConfig && worksGallery && worksFilters) {
   worksGallery.replaceChildren(groupFragment);
   worksGallery.setAttribute("role", "tabpanel");
   worksGallery.tabIndex = 0;
-  registerRevealTargets(worksGallery.querySelectorAll(".work-item"));
   worksFilters.replaceChildren(navFragment);
 
   if (
@@ -501,73 +545,15 @@ if (worksConfig && worksGallery && worksFilters) {
   setActiveCategory("all");
   updateTabOrientation();
 
-  const visibleMedia = [...worksGallery.querySelectorAll(".work-item:not([hidden]) img, .work-item:not([hidden]) video")]
-    .filter((media) => {
-      if (media.closest("[hidden]")) return false;
-      const bounds = media.getBoundingClientRect();
-      return bounds.bottom > -120 && bounds.top < window.innerHeight + 120;
-    });
-  const waitForMedia = (media) =>
-    new Promise((resolve, reject) => {
-      const isImage = media instanceof HTMLImageElement;
-      const readyEvent = isImage ? "load" : "loadeddata";
-      const cleanup = () => {
-        window.clearTimeout(timeoutId);
-        media.removeEventListener(readyEvent, onReady);
-        media.removeEventListener("error", onError);
-      };
-      const onReady = () => {
-        cleanup();
-        resolve();
-      };
-      const onError = () => {
-        cleanup();
-        reject(new Error(`作品素材載入失敗：${media.currentSrc || media.src}`));
-      };
-      const timeoutId = window.setTimeout(() => {
-        cleanup();
-        reject(new Error(`作品素材載入逾時：${media.currentSrc || media.src}`));
-      }, 10000);
-
-      if (isImage) {
-        media.loading = "eager";
-        if (media.complete) {
-          cleanup();
-          if (media.naturalWidth > 0) resolve();
-          else reject(new Error(`作品圖片載入失敗：${media.currentSrc || media.src}`));
-          return;
-        }
-      } else if (media.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
-        cleanup();
-        resolve();
-        return;
-      }
-
-      media.addEventListener(readyEvent, onReady, { once: true });
-      media.addEventListener("error", onError, { once: true });
-      if (!isImage) {
-        media.preload = "metadata";
-        media.load();
-      }
-    });
-
-  void Promise.allSettled(visibleMedia.map(waitForMedia)).then((results) => {
-    const failures = results.filter((result) => result.status === "rejected");
-    if (failures.length) {
-      console.warn("部分作品素材未能完成載入，先顯示其餘可用內容。", failures);
-      const warning = document.querySelector("[data-content-load-warning]");
-      if (warning) {
-        warning.textContent = "部分作品預覽素材仍未載入，已先顯示可用的作品資訊。";
-        warning.dataset.loadFailure = "true";
-        warning.hidden = false;
-      }
-    }
-    window.dispatchEvent(
-      new CustomEvent("page-content-ready", {
-        detail: { page: "works", part: "media", items: visibleMedia.length },
-      }),
-    );
-  });
+  window.dispatchEvent(
+    new CustomEvent("page-content-ready", {
+      detail: {
+        page: "works",
+        part: "gallery",
+        items: worksGallery.querySelectorAll(".work-item:not([hidden])").length,
+      },
+    }),
+  );
 } else if (worksGallery && worksFilters) {
   console.error("作品資料設定未載入，無法建立作品清單。");
   const warning = document.querySelector("[data-content-load-warning]");

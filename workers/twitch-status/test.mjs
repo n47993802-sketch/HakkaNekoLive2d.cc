@@ -113,7 +113,10 @@ test("returns configured Twitch and YouTube recommendation statuses", async (t) 
       return Response.json({ access_token: "test-token", expires_in: 3600 });
     }
     if (url.hostname === "api.twitch.tv") {
-      assert.equal(url.searchParams.getAll("user_login").length, 7);
+      assert.deepEqual(
+        url.searchParams.getAll("user_login"),
+        globalThis.CHANNELS_CONFIG.twitch,
+      );
       return Response.json({ data: [{ user_login: "bunny0422" }] });
     }
     if (url.pathname.endsWith("/youtube/v3/channels")) {

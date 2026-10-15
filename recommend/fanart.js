@@ -34,6 +34,23 @@ if (fanartConfig && fanartGallery && fanartFilters) {
   ).replace(/\/+$/, "");
   const mediaUrl = (file, assetBase = fanartConfig.assetBase) =>
     `${assetBase}/${encodeURIComponent(file)}`;
+  const rawGitHubUrl = (source) => {
+    const match = source.match(
+      /^https:\/\/cdn\.jsdelivr\.net\/gh\/([^/]+\/[^/@]+)@([^/]+)\/(.+)$/,
+    );
+    return match
+      ? `https://raw.githubusercontent.com/${match[1]}/${match[2]}/${match[3]}`
+      : null;
+  };
+  const useRawGitHubFallback = (media) => {
+    if (media.dataset.rawGitHubFallback === "true") return false;
+    const fallbackUrl = rawGitHubUrl(media.currentSrc || media.src);
+    if (!fallbackUrl) return false;
+    media.dataset.rawGitHubFallback = "true";
+    media.src = fallbackUrl;
+    if (typeof media.load === "function") media.load();
+    return true;
+  };
   const getFileExtension = (file) =>
     file.slice(file.lastIndexOf(".")).toLowerCase();
   const isVideo = (work) => videoExtensions.has(getFileExtension(work.file));
@@ -221,6 +238,8 @@ if (fanartConfig && fanartGallery && fanartFilters) {
     const work = lightboxItems[lightboxIndex];
     const source = mediaUrl(work.file, activeLightboxAssetBase);
     lightboxVideo.pause();
+    delete lightboxVideo.dataset.rawGitHubFallback;
+    delete lightboxImage.dataset.rawGitHubFallback;
     lightboxVideo.style.display = "none";
     lightboxImage.style.display = "none";
     lightboxFallback.hidden = true;
@@ -307,11 +326,24 @@ if (fanartConfig && fanartGallery && fanartFilters) {
   });
   lightboxVideo.addEventListener("error", () => {
     if (!lightbox.open || activeLightboxMedia !== "video") return;
+    if (useRawGitHubFallback(lightboxVideo)) {
+      lightboxVideo.play().catch((error) => {
+        if (
+          error.name !== "NotAllowedError" &&
+          error.name !== "AbortError" &&
+          error.name !== "NotSupportedError"
+        ) {
+          console.warn("二創燈箱動畫備援播放失敗。", error);
+        }
+      });
+      return;
+    }
     lightboxVideo.style.display = "none";
     lightboxFallback.hidden = false;
   });
   lightboxImage.addEventListener("error", () => {
     if (!lightbox.open || activeLightboxMedia !== "image") return;
+    if (useRawGitHubFallback(lightboxImage)) return;
     lightboxImage.style.display = "none";
     lightboxFallback.hidden = false;
   });
@@ -393,11 +425,22 @@ if (fanartConfig && fanartGallery && fanartFilters) {
       video.addEventListener(
         "error",
         () => {
+          if (useRawGitHubFallback(video)) {
+            video.play().catch((error) => {
+              if (
+                error.name !== "NotAllowedError" &&
+                error.name !== "AbortError" &&
+                error.name !== "NotSupportedError"
+              ) {
+                console.warn("二創動畫備援播放失敗。", error);
+              }
+            });
+            return;
+          }
           media.classList.remove("is-loading");
           video.style.display = "none";
           fallback.hidden = false;
         },
-        { once: true },
       );
       video.src = source;
       button.append(video, fallback);
@@ -418,6 +461,7 @@ if (fanartConfig && fanartGallery && fanartFilters) {
       image.addEventListener(
         "error",
         () => {
+          if (useRawGitHubFallback(image)) return;
           image.classList.add("is-loaded");
           media.classList.remove("is-loading");
           console.error(`二創作品圖片載入失敗：${work.file}`);
@@ -534,7 +578,6 @@ if (fanartConfig && fanartGallery && fanartFilters) {
     fanartGallery.replaceChildren(
       ...works.map((work) => createFanartCard(work)),
     );
-    registerRevealTargets(fanartGallery.querySelectorAll(".fanart-card"));
     renderFilters();
     applyFanartFilter(activeFanartFilter);
     observePreviewVideos(previewVideos);
@@ -577,7 +620,6 @@ if (fanartConfig && fanartGallery && fanartFilters) {
           createFanartCard(work, loadedR18Works, r18AssetBase),
         ),
       );
-      registerRevealTargets(fanartR18Gallery.querySelectorAll(".fanart-card"));
       observePreviewVideos(previewVideos.slice(firstR18VideoIndex));
       renderFilters();
       applyFanartFilter(activeFanartFilter);
@@ -613,26 +655,42 @@ if (fanartConfig && fanartGallery && fanartFilters) {
   }
 
   const loadWorks = async () => {
-    let files;
-    let usedFallback = false;
-    try {
-      files = await discoverFiles();
-    } catch (error) {
-      console.warn("無法自動讀取二創資料夾，改用設定檔備援清單。", error);
-      files = fallbackFiles;
-      usedFallback = true;
-    }
-
-    works = buildWorks(
-      sortFiles(files.filter((file) => !r18FileSet.has(file))),
+    const fallbackWorks = buildWorks(
+      sortFiles(fallbackFiles.filter((file) => !r18FileSet.has(file))),
     );
+    works = fallbackWorks;
     renderWorks();
     if (fanartStatus) {
       fanartStatus.textContent = works.length
-        ? usedFallback
+        ? `正在更新作品清單，已先顯示 ${works.length} 件作品。`
+        : "正在讀取二創作品清單……";
+    }
+    window.dispatchEvent(
+      new CustomEvent("page-content-ready", {
+        detail: { page: "recommend", part: "fanart", items: works.length },
+      }),
+    );
+
+    try {
+      const files = await discoverFiles();
+      const discoveredWorks = buildWorks(
+        sortFiles(files.filter((file) => !r18FileSet.has(file))),
+      );
+      const worksChanged =
+        discoveredWorks.length !== works.length ||
+        discoveredWorks.some((work, index) => work.file !== works[index].file);
+      works = discoveredWorks;
+      if (worksChanged) renderWorks();
+      if (fanartStatus) {
+        fanartStatus.textContent = `已從資料夾自動讀取 ${works.length} 件二創作品。`;
+      }
+    } catch (error) {
+      console.warn("無法自動讀取二創資料夾，改用設定檔備援清單。", error);
+      if (fanartStatus) {
+        fanartStatus.textContent = works.length
           ? `無法自動讀取資料夾，暫以設定檔備援清單顯示 ${works.length} 件作品。`
-          : `已從資料夾自動讀取 ${works.length} 件二創作品。`
-        : "目前沒有可展示的二創作品。";
+          : "目前沒有可展示的作品。";
+      }
     }
   };
 
@@ -642,12 +700,5 @@ if (fanartConfig && fanartGallery && fanartFilters) {
       if (fanartStatus) {
         fanartStatus.textContent = "二創資料暫時無法載入，請稍後再試。";
       }
-    })
-    .finally(() => {
-      window.dispatchEvent(
-        new CustomEvent("page-content-ready", {
-          detail: { page: "recommend", part: "fanart", items: works.length },
-        }),
-      );
     });
 }

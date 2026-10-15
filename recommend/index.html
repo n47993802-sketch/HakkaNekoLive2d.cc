@@ -9,7 +9,7 @@
     <meta name="twitter:card" content="summary_large_image" /><meta name="twitter:title" content="推薦與粉絲二創｜阿卡貓 HakkaNeko" /><meta name="twitter:description" content="阿卡貓推薦的頻道，以及粉絲創作的阿卡貓二創作品。" />
     <meta name="twitter:image" content="https://hakkanekolive2d.cc/assets/images/hero-happy2024.png" /><meta name="twitter:image:alt" content="阿卡貓 HakkaNeko 的角色插圖" />
     <link rel="icon" href="../assets/images/hakkaneko-pixel.gif" type="image/gif" />
-    <title>推薦與粉絲二創｜阿卡貓 HakkaNeko</title><script src="../theme-init.js?v=system-theme-follow-1"></script><link rel="stylesheet" href="../styles.css?v=site-background-flow-14" /><script src="channels-config.js?v=channel-add-ryunasato-1" defer></script><script src="fanart-config.js?v=fanart-r18-subfolder-2" defer></script><script src="../script.js?v=site-preferences-9" defer></script><script src="channels.js?v=channel-filters-removed-1" defer></script><script src="fanart.js?v=fanart-loading-skeleton-1" defer></script>
+    <title>推薦與粉絲二創｜阿卡貓 HakkaNeko</title><script src="../theme-init.js?v=system-theme-follow-1"></script><link rel="stylesheet" href="../styles.css?v=site-background-flow-15" /><script src="channels-config.js?v=channel-add-ryunasato-1" defer></script><script src="fanart-config.js?v=fanart-inventory-fallback-1" defer></script><script src="../script.js?v=site-preferences-9" defer></script><script src="channels.js?v=channel-manual-refresh-silent-1" defer></script><script src="fanart.js?v=fanart-raw-media-fallback-1" defer></script>
   </head>
   <body>
     <div class="page-loader" data-page-loader data-page-loader-page="recommend" data-page-loader-wait-for="channels fanart" role="status" aria-live="polite" aria-label="頁面載入中">
@@ -21,10 +21,10 @@
     </div>
     <a class="skip-link" href="#main">跳至主要內容</a>
     <header class="site-header">
-      <a class="brand" href="../index.html"><img class="brand-icon" src="../assets/images/hakkaneko-pixel.gif" alt="" aria-hidden="true" /><span>HakkaNeko<small>LIVE2D CREATOR</small></span></a>
+      <a class="brand" href="../"><img class="brand-icon" src="../assets/images/hakkaneko-pixel.gif" alt="" aria-hidden="true" /><span>HakkaNeko<small>LIVE2D CREATOR</small></span></a>
       <button class="menu-toggle" aria-label="開啟導覽選單" aria-expanded="false" aria-controls="site-nav"></button>
       <nav class="site-nav" id="site-nav" aria-label="主要導覽">
-        <a class="nav-about" href="../index.html"><span class="nav-label">簡介<span class="nav-label-en" aria-hidden="true">About</span></span></a><a class="nav-partners" href="../collab/"><span class="nav-label">合作夥伴<span class="nav-label-en" aria-hidden="true">Team</span></span></a><a class="nav-pricing" href="../pricing/"><span class="nav-label">委託價目<span class="nav-label-en" aria-hidden="true">Rates</span></span></a><a class="nav-process" href="../process/"><span class="nav-label">流程規範<span class="nav-label-en" aria-hidden="true">Process</span></span></a><a class="nav-schedule" href="../schedule/"><span class="nav-label">排單查詢<span class="nav-label-en" aria-hidden="true">Schedule</span></span></a><a class="nav-works" href="../works/"><span class="nav-label">作品展示<span class="nav-label-en" aria-hidden="true">Works</span></span></a><a class="current nav-recommend" href="index.html" aria-current="page"><span class="nav-label">推薦資訊<span class="nav-label-en" aria-hidden="true">Picks</span></span></a>
+        <a class="nav-about" href="../"><span class="nav-label">簡介<span class="nav-label-en" aria-hidden="true">About</span></span></a><a class="nav-partners" href="../collab/"><span class="nav-label">合作夥伴<span class="nav-label-en" aria-hidden="true">Team</span></span></a><a class="nav-pricing" href="../pricing/"><span class="nav-label">委託價目<span class="nav-label-en" aria-hidden="true">Rates</span></span></a><a class="nav-process" href="../process/"><span class="nav-label">流程規範<span class="nav-label-en" aria-hidden="true">Process</span></span></a><a class="nav-schedule" href="../schedule/"><span class="nav-label">排單查詢<span class="nav-label-en" aria-hidden="true">Schedule</span></span></a><a class="nav-works" href="../works/"><span class="nav-label">作品展示<span class="nav-label-en" aria-hidden="true">Works</span></span></a><a class="current nav-recommend" href="./" aria-current="page"><span class="nav-label">推薦資訊<span class="nav-label-en" aria-hidden="true">Picks</span></span></a>
         <div class="site-nav-settings" data-mobile-preferences-target><p class="site-preferences-heading">顯示設定</p></div>
       </nav>
       <div class="site-preferences">
@@ -53,11 +53,15 @@
             <p class="section-kicker">CHANNELS I LIKE</p><h2 class="page-subtitle">推薦頻道</h2>
             <p class="page-copy">阿卡貓精選推薦的頻道，歡迎有興趣的話去看看！</p>
             <div class="channel-toolbar">
+              <button class="button channel-refresh-button" type="button" data-channel-refresh aria-label="手動更新 Twitch 與 YouTube 直播狀態">
+                <span class="material-icon" aria-hidden="true">sync</span>
+                <span>更新狀態</span>
+              </button>
               <div class="channel-updated">
                 <p>上次檢查：<time data-channel-updated>尚未檢查</time></p>
               </div>
             </div>
-            <p class="channel-status-message" data-channel-status-message role="status" aria-live="polite">正在載入推薦頻道……</p>
+            <p class="channel-status-message" data-channel-status-message role="status" aria-live="polite" hidden></p>
             <div class="channel-grid" data-channel-list></div>
             <div class="channel-submit-note">
               <div class="channel-submit-copy">
@@ -159,7 +163,7 @@
     <footer class="site-footer inner-footer">
       <div class="footer-main">
         <div class="footer-identity">
-          <a class="brand" href="../index.html"><img class="brand-icon" src="../assets/images/hakkaneko-pixel.gif" alt="" aria-hidden="true" /><span>HakkaNeko<small>LIVE2D CREATOR</small></span></a>
+          <a class="brand" href="../"><img class="brand-icon" src="../assets/images/hakkaneko-pixel.gif" alt="" aria-hidden="true" /><span>HakkaNeko<small>LIVE2D CREATOR</small></span></a>
           <p class="footer-role">Live2D 建模師・個人接案建模師</p>
         </div>
         <nav class="footer-links" aria-label="社群與聯絡方式">
