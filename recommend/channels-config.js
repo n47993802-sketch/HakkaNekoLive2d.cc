@@ -202,6 +202,22 @@ globalThis.CHANNELS_CONFIG = {
         },
       ],
     },
+    {
+      key: "umi0531",
+      name: "烏咪烏咪",
+      bio: "長駐英國的虎皮鸚鵡，卑鄙的個人勢外鄉鳥，喜歡悠哉悠哉地玩單機遊戲。一星期開四晚遊戲台。。",
+      avatar: {
+        src: "https://static-cdn.jtvnw.net/jtv_user_pictures/e9a7bc67-e666-409e-827a-f40d0cbe2d2d-profile_image-300x300.png",
+        alt: "烏咪烏咪",
+      },
+      platforms: [
+        {
+          type: "twitch",
+          url: "https://www.twitch.tv/umi0531",
+          label: "umi0531",
+        },
+      ],
+    },
   ],
   twitch: [
     "bunny0422",
@@ -213,6 +229,7 @@ globalThis.CHANNELS_CONFIG = {
     "mo_chan_neko",
     "lilisnow_fps",
     "ryunasato221105",
+    "umi0531",
   ],
   youtube: [
     "MurichanChannel",
