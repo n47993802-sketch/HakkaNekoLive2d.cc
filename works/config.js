@@ -11,7 +11,7 @@ globalThis.WORKS_CONFIG = {
     {
       id: "hakkaneko-model",
       title: "阿卡貓 自製 Live2D V皮",
-      description: "建模：阿卡貓 HakkaNeko",
+      description: "阿卡貓 HakkaNeko",
       media: "portfolio/C/877808_510498.webp",
       mediaAlt: "阿卡貓 Live2D V皮展示",
       href: "https://x.com/HakkaNekoLive2D/status/1932328695005618244",
@@ -19,10 +19,18 @@ globalThis.WORKS_CONFIG = {
     {
       id: "catball-model",
       title: "貓球 自製 Live2D V皮",
-      description: "建模：阿卡貓 HakkaNeko",
+      description: "阿卡貓 HakkaNeko",
       media: "../assets/images/catball-model-showcase.png",
       mediaAlt: "貓球 Live2D V皮展示",
       href: "https://x.com/HakkaNekoLive2D/status/2110346080382861732",
+    },
+    {
+      id: "dongling-model-showcase",
+      title: "【冬鈴2.0展示影片】山雀長大會變成甚麼呢?",
+      description: "剪輯師：眠花咩",
+      media: "https://img.youtube.com/vi/8ei8YRF5g-I/hqdefault.jpg",
+      mediaAlt: "冬鈴 2.0 VTuber 模型展示影片封面",
+      href: "https://youtu.be/8ei8YRF5g-I",
     },
   ],
   stickers: [

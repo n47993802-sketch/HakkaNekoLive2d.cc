@@ -218,6 +218,182 @@ globalThis.CHANNELS_CONFIG = {
         },
       ],
     },
+    {
+      key: "axeria0530",
+      name: "艾瑟莉雅",
+      bio: "一名被斧頭父母領養的正常人類🪓零戀愛感系主播，不養嘎，養不起(#´ᗜ`#)",
+      avatar: {
+        src: "https://unavatar.io/twitch/axeria0530",
+        alt: "axeria0530",
+      },
+      platforms: [
+        {
+          type: "twitch",
+          url: "https://www.twitch.tv/axeria0530/",
+          label: "axeria0530",
+        },
+      ],
+    },
+    {
+      key: "alien_kiki",
+      name: "外星キ",
+      bio: "大家好~我是外星キ，稱呼：kiki，物種：宇宙生物，語言：中文，歡迎一起攻占地球~!",
+      avatar: {
+        src: "https://unavatar.io/twitch/alien_kiki",
+        alt: "alien_kiki",
+      },
+      platforms: [
+        {
+          type: "twitch",
+          url: "https://www.twitch.tv/alien_kiki",
+          label: "alien_kiki",
+        },
+      ],
+    },
+    {
+      key: "mu_miao",
+      name: "慕慕喵",
+      bio: "嗨嗨這裡是慕喵~圖奇不定期開台，內容大致以繪圖&遊戲為主 Live2D學習中，偶爾可能隨機掉落雜談~",
+      avatar: {
+        src: "https://unavatar.io/twitch/mu_miao",
+        alt: "mu_miao",
+      },
+      platforms: [
+        {
+          type: "twitch",
+          url: "https://www.twitch.tv/mu_miao",
+          label: "mu_miao",
+        },
+      ],
+    },
+    {
+      key: "chiyosetsuna",
+      name: "千代剎那",
+      bio: "因為詛咒而變成了女孩子，在異世界的角落裏獨自開著一家小茶舍的小女僕",
+      avatar: {
+        src: "https://unavatar.io/twitch/chiyosetsuna",
+        alt: "chiyosetsuna",
+      },
+      platforms: [
+        {
+          type: "twitch",
+          url: "https://www.twitch.tv/chiyosetsuna",
+          label: "chiyosetsuna",
+        },
+      ],
+    },
+    {
+      key: "VampKH_vtuber",
+      name: "花咲小春 Vamp Koharu Ch.",
+      bio: "被魔界放逐的軟爛吸血鬼Vtuber🦇 怠惰な301歳吸血鬼こはるです",
+      avatar: {
+        src: "https://unavatar.io/youtube/VampKH_vtuber",
+        alt: "VampKH_vtuber",
+      },
+      platforms: [
+        {
+          type: "youtube",
+          url: "https://www.youtube.com/@VampKH_vtuber",
+          label: "VampKH_vtuber",
+        },
+      ],
+    },
+    {
+      key: "rumu_1213",
+      name: "璐夢",
+      bio: "大家好呀，我是在人類世界生活的見習女巫，請多多指教🔮",
+      avatar: {
+        src: "https://unavatar.io/twitch/rumu_1213",
+        alt: "rumu_1213",
+      },
+      platforms: [
+        {
+          type: "twitch",
+          url: "https://www.twitch.tv/rumu_1213",
+          label: "rumu_1213",
+        },
+      ],
+    },
+    {
+      key: "perce_1004",
+      name: "西西寶寶",
+      bio: "嗨我是西西寶寶，想找我工商！歡迎詢問。",
+      avatar: {
+        src: "https://unavatar.io/twitch/perce_1004",
+        alt: "perce_1004",
+      },
+      platforms: [
+        {
+          type: "twitch",
+          url: "https://www.twitch.tv/perce_1004",
+          label: "perce_1004",
+        },
+      ],
+    },
+    {
+      key: "rsundae",
+      name: "紅妻",
+      bio: "紅塵幾度，妻柔似水，紅妻的世界，由各式各樣的旅行者們構思而成，這兒成了你們的「築夢」了嗎？",
+      avatar: {
+        src: "https://unavatar.io/twitch/rsundae",
+        alt: "rsundae",
+      },
+      platforms: [
+        {
+          type: "twitch",
+          url: "https://www.twitch.tv/rsundae",
+          label: "rsundae",
+        },
+      ],
+    },
+    {
+      key: "yumeno_kaoru",
+      name: "夢野薰草",
+      bio: "大家好~我是夢野薰草~ 人們心中所想等待的希望,聚集後所誕生的薰衣草精靈~",
+      avatar: {
+        src: "https://unavatar.io/youtube/yumeno_kaoru",
+        alt: "yumeno_kaoru",
+      },
+      platforms: [
+        {
+          type: "youtube",
+          url: "https://www.youtube.com/@yumeno_kaoru",
+          label: "yumeno_kaoru",
+        },
+      ],
+    },
+    {
+      key: "reiya-yt",
+      name: "零夜Reiya",
+      bio: "✦夢想能夠創造一個可以讓大家安心、快樂休息的溫暖歇腳處",
+      avatar: {
+        src: "https://unavatar.io/youtube/零夜Reiya_YT",
+        alt: "零夜Reiya",
+      },
+      platforms: [
+        {
+          type: "youtube",
+          url: "https://www.youtube.com/@零夜Reiya_YT",
+          label: "零夜Reiya_YT",
+        },
+      ],
+    },
+    {
+      key: "plumycola",
+      name: "梅紫可樂",
+      bio: "這裡是最清楚可愛的天使٩꒰｡•◡•｡꒱۶’不容反駁!",
+      avatar: {
+        src: "https://unavatar.io/twitch/plumycola",
+        alt: "梅紫可樂",
+      },
+      platforms: [
+        {
+          type: "twitch",
+          url: "https://www.twitch.tv/plumycola",
+          label: "plumycola",
+        },
+      ],
+    },
   ],
   twitch: [
     "bunny0422",
@@ -230,11 +406,22 @@ globalThis.CHANNELS_CONFIG = {
     "lilisnow_fps",
     "ryunasato221105",
     "umi0531",
+    "axeria0530",
+    "alien_kiki",
+    "mu_miao",
+    "chiyosetsuna",
+    "rumu_1213",
+    "perce_1004",
+    "rsundae",
+    "plumycola",
   ],
   youtube: [
     "MurichanChannel",
     "emotvvv",
     "darkmeyaya",
     "Shiwakakaede_RS",
+    "VampKH_vtuber",
+    "yumeno_kaoru",
+    "零夜Reiya_YT",
   ],
 };

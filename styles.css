@@ -1238,12 +1238,12 @@ h1 em, h2 em { color: var(--accent); font-style: normal; }
 .channel-updated p { margin: 0; color: var(--muted); font-size: var(--type-caption); white-space: nowrap; }
 .channel-status-message { min-height: 44px; margin: 0 0 16px; padding: 12px 15px; border: 1px solid var(--line); color: var(--text-soft); font-size: var(--type-small); }
 .channel-status-message[hidden] { display: none; }
-.channel-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); grid-auto-rows: 1fr; align-items: stretch; gap: 17px; }
-.channel-card { min-width: 0; min-height: 300px; display: flex; flex-direction: column; gap: 14px; padding: 19px; border: 1px solid var(--line); background: var(--surface); transition: border-color .2s ease,box-shadow .25s ease; }
+.channel-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); grid-auto-rows: 1fr; align-items: stretch; gap: 14px; }
+.channel-card { min-width: 0; min-height: 220px; display: grid; grid-template-rows: auto 1fr auto; gap: 12px; padding: 16px; border: 1px solid var(--line); background: var(--surface); transition: border-color .2s ease,box-shadow .25s ease; }
 .channel-card:hover, .channel-card:focus-within { border-color: var(--accent); box-shadow: 0 8px 22px #22283a13; }
 .channel-card[hidden],.fanart-card[hidden] { display: none !important; }
 .channel-card-heading { display: flex; align-items: center; gap: 12px; }
-.channel-avatar { width: 58px; height: 58px; flex: 0 0 auto; overflow: hidden; border-radius: 50%; background: var(--surface-soft); }
+.channel-avatar { width: 50px; height: 50px; flex: 0 0 auto; overflow: hidden; border-radius: 50%; background: var(--surface-soft); }
 .channel-avatar img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .channel-card-identity { min-width: 0; display: grid; gap: 4px; }
 .channel-card-identity h3 { margin: 0; font-size: var(--type-ui); line-height: 1.45; }
@@ -1254,8 +1254,8 @@ h1 em, h2 em { color: var(--accent); font-style: normal; }
 .channel-platform-state[data-state="online"] { color: var(--channel-live-text); border-color: var(--channel-live-border); background: var(--channel-live-bg); }
 .channel-platform-state[data-state="offline"] { color: var(--channel-offline-text); border-color: var(--line); background: var(--channel-offline-bg); }
 .channel-platform-state[data-state="unknown"] { color: var(--channel-unknown-text); border-color: var(--channel-unknown-border); background: var(--channel-unknown-bg); }
-.channel-bio { flex: 1; margin: 0; color: var(--text-soft); font-size: var(--type-small); line-height: 1.75; }
-.channel-platforms { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: auto; padding-top: 13px; border-top: 1px solid var(--line); }
+.channel-bio { min-width: 0; margin: 0; color: var(--text-soft); font-size: var(--type-small); line-height: 1.65; overflow-wrap: anywhere; }
+.channel-platforms { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; padding-top: 11px; border-top: 1px solid var(--line); }
 .channel-platform-link { min-width: 0; display: inline-flex; align-items: center; gap: 9px; padding: 6px 9px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface-soft); }
 .channel-platform-icon { display: block; width: 28px; height: 28px; flex: 0 0 auto; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; }
 .channel-platform-twitch .channel-platform-icon { color: #9146ff; }
@@ -1320,6 +1320,7 @@ h1 em, h2 em { color: var(--accent); font-style: normal; }
 }
 @media (max-width: 900px) {
   .channel-toolbar { align-items: flex-start; }
+  .channel-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
   .fanart-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
   .fanart-character-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
 }
@@ -1334,7 +1335,7 @@ h1 em, h2 em { color: var(--accent); font-style: normal; }
   .work-pager-button { width: 32px; height: 32px; }
   .work-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 18px 12px; }
   .channel-grid { grid-template-columns: 1fr; grid-auto-rows: auto; gap: 12px; }
-  .channel-card { padding: 15px; }
+  .channel-card { min-height: 0; padding: 15px; }
   .channel-toolbar { gap: 12px; }
   .fanart-grid { gap: 10px; }
   .fanart-r18 { scroll-margin-top: 78px; }
