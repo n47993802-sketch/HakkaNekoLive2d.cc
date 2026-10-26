@@ -22,7 +22,8 @@ if (worksConfig && worksGallery && worksFilters) {
     })),
     ...worksConfig.publishedWorks.map((item) => ({
       ...item,
-      mediaType: "image",
+      mediaType: item.mediaType || "image",
+      clickBehavior: "link",
     })),
   ];
 
@@ -206,11 +207,25 @@ if (worksConfig && worksGallery && worksFilters) {
     thumb.className = "work-thumb";
 
     if (item.mediaType === "video") {
-      const button = document.createElement("button");
-      button.className = "work-media-button";
-      button.type = "button";
-      button.setAttribute("aria-label", `${item.title}，開啟燈箱預覽`);
-      button.addEventListener("click", () => openVideoLightbox(item));
+      const mediaControl =
+        item.clickBehavior === "link"
+          ? document.createElement("a")
+          : document.createElement("button");
+      mediaControl.className =
+        item.clickBehavior === "link" ? "work-media-link" : "work-media-button";
+      if (item.clickBehavior === "link") {
+        mediaControl.href = item.href;
+        mediaControl.target = "_blank";
+        mediaControl.rel = "noopener noreferrer";
+        mediaControl.setAttribute(
+          "aria-label",
+          `${item.title}，開啟作品原始頁面`,
+        );
+      } else {
+        mediaControl.type = "button";
+        mediaControl.setAttribute("aria-label", `${item.title}，開啟燈箱預覽`);
+        mediaControl.addEventListener("click", () => openVideoLightbox(item));
+      }
 
       const video = document.createElement("video");
       video.src = mediaUrl(item.media);
@@ -221,7 +236,10 @@ if (worksConfig && worksGallery && worksFilters) {
       video.setAttribute("aria-label", `${item.title}動畫預覽`);
       const fallback = document.createElement("span");
       fallback.className = "work-video-fallback";
-      fallback.textContent = "預覽目前無法播放，點按縮圖可嘗試開啟燈箱。";
+      fallback.textContent =
+        item.clickBehavior === "link"
+          ? "預覽目前無法播放，點按縮圖可前往作品頁面。"
+          : "預覽目前無法播放，點按縮圖可嘗試開啟燈箱。";
       fallback.hidden = true;
       video.addEventListener(
         "error",
@@ -242,8 +260,8 @@ if (worksConfig && worksGallery && worksFilters) {
           fallback.hidden = false;
         },
       );
-      button.append(video, fallback);
-      thumb.append(button);
+      mediaControl.append(video, fallback);
+      thumb.append(mediaControl);
       previewVideos.push(video);
     } else if (item.mediaType === "model" && !item.media) {
       const modelPreview = document.createElement("span");

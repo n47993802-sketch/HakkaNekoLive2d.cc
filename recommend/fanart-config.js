@@ -64,6 +64,7 @@ globalThis.FANART_CONFIG = {
     "阿卡咪生氣.png",
   ],
   fallbackAnimatedWorks: [
+    "HalloweenBall.webm",
     "463656_922768.webm",
     "594525_94599.webm",
     "946593_775219.webm",
@@ -73,6 +74,7 @@ globalThis.FANART_CONFIG = {
   fallbackR18Works: ["SPOILER_GRZf2lqaEAAQ25z.png"],
 
   metadata: {
+    "HalloweenBall.webm": { title: "萬聖節貓球", artist: "千代剎那" },
     "001.webp": { title: "貓球早安", artist: "千代剎那" },
     "002.webp": { title: "卡咪日常", artist: "千代剎那" },
     "679139_474541.webp": { title: "卡咪招呼", artist: "玻璃姬" },

@@ -132,6 +132,16 @@ globalThis.WORKS_CONFIG = {
   ],
   publishedWorks: [
     {
+      id: "halloween-ball",
+      category: "large-animation",
+      title: "萬聖節貓球",
+      description: "萬聖節特別動畫展示。",
+      media: "fanart/HalloweenBall.webm",
+      mediaType: "video",
+      mediaAlt: "萬聖節貓球 動畫縮圖",
+      href: "https://x.com/HakkaNekoLive2D/status/2114643785292677589",
+    },
+    {
       id: "dinner-song-pv",
       category: "large-animation",
       title: "【晚餐歌】音樂 PV 動畫 Live2D 演出",
