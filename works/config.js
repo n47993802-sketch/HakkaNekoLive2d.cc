@@ -142,6 +142,16 @@ globalThis.WORKS_CONFIG = {
       href: "https://x.com/HakkaNekoLive2D/status/2114643785292677589",
     },
     {
+      id: "halloween-cat",
+      category: "large-animation",
+      title: "花咲小春「夜幕圖書館」 ",
+      description: "為花咲小春製作的講故事環節。",
+      media: "portfolio/D/2114975632593744100.webm",
+      mediaType: "video",
+      mediaAlt: "花咲小春「夜幕圖書館」動畫縮圖",
+      href: "https://x.com/HakkaNekoLive2D/status/2114975632593744100",
+    },
+    {
       id: "dinner-song-pv",
       category: "large-animation",
       title: "【晚餐歌】音樂 PV 動畫 Live2D 演出",
